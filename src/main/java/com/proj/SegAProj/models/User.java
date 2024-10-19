@@ -1,11 +1,13 @@
 package com.proj.SegAProj.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.proj.SegAProj.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table (name = "users",
@@ -39,19 +41,13 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "users_reservations",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "reservation_id")
-    )
-    private List<Reservation> reservations;
+    @JsonIgnore
+    @ManyToMany(mappedBy = "userHashClass")
+    private Set<Class> classHashUser = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "users_classes",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "class_id")
-    )
-    private List<Class> classes;
+    @ManyToMany(mappedBy = "userHashReservation")
+    private Set<Reservation> reservationHashUser = new HashSet<>();
+
+    //private List<Reservation> reservations;
+
 }

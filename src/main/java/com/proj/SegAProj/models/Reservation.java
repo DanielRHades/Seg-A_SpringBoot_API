@@ -30,10 +30,19 @@ public class Reservation {
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
 
-    @ManyToOne
-    @JoinColumn(name = "classroom_id")
+    @ManyToMany
+    @JoinTable(
+            name = "reservations_users",
+            joinColumns = @JoinColumn(name = "reservation_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> userHashReservation;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(
+            name = "classroom_id",
+            referencedColumnName = "id"
+    )
     private Classroom classroomReservation;
 
-    @ManyToMany(mappedBy = "reservations")
-    private List<User> users;
 }

@@ -9,7 +9,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "classes")
@@ -37,10 +39,23 @@ public class Class {
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime endTime;
 
-    @ManyToOne
-    @JoinColumn(name = "classroom_id")
+    @ManyToMany
+    @JoinTable(
+            name = "classes_users",
+            joinColumns = @JoinColumn(name = "class_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<User> userHashClass = new HashSet<>();
+
+    public void enrollUserToClass(User user){
+        userHashClass.add(user);
+    }
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(
+            name = "classroom_id",
+            referencedColumnName = "id"
+    )
     private Classroom classroomClass;
 
-    @ManyToMany(mappedBy = "classes")
-    private List<User> users;
 }

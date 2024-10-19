@@ -36,6 +36,19 @@ public class ClassController {
         return classService.update(id, classEntity);
     }
 
+    @PutMapping(path = "/{classId}/user/{userId}")
+    public Class enrollUserToClass(@PathVariable Long classId,
+                                   @PathVariable Long userId){
+
+        return classService.enrollUserToClass(classId, userId);
+    }
+
+    @PutMapping(path = "/{classId}/classroom/{classroomId}")
+    public Class assignClassroomToClass(@PathVariable Long classId,
+                                        @PathVariable Long classroomId){
+        return classService.assignClassroomToClass(classId, classroomId);
+    }
+
     @DeleteMapping(path = "/{id}")
     public void delete (@PathVariable Long id){
         classService.delete(id);

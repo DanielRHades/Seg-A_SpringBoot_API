@@ -6,7 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "classrooms")
@@ -26,9 +28,9 @@ public class Classroom {
     @Column(name = "capacity")
     private Integer capacity;
 
-    @OneToMany(mappedBy = "classroomReservation", fetch = FetchType.LAZY)
-    private List<Reservation> reservations;
+    @OneToMany(mappedBy = "classroomReservation")
+    private Set<Reservation> reservationHashClassroom = new HashSet<>();
 
-    @OneToMany(mappedBy = "classroomClass", fetch = FetchType.LAZY)
-    private List<Class> classes;
+    @OneToMany(mappedBy = "classroomClass")
+    private Set<Class> classHashClassroom = new HashSet<>();
 }
