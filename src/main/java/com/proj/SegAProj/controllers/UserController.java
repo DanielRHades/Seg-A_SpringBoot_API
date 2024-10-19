@@ -6,6 +6,9 @@ import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Objects;
+
 @RestController
 @RequestMapping("/api/v1/user")
 public class UserController {
@@ -16,9 +19,19 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping(path = "/{id}")
-    public User findById(@PathVariable(value = "id") Long id){
+    @GetMapping(path = "/id/{id}")
+    public User findById(@PathVariable Long id){
         return userService.findById(id);
+    }
+
+    @GetMapping(path = "/idUni/{idUni}")
+    public User findByIdUni(@PathVariable String idUni){
+        return userService.findByIdUni(idUni);
+    }
+
+    @GetMapping
+    public List<User> findAll(){
+        return userService.findAll();
     }
 
     @PostMapping
@@ -27,5 +40,15 @@ public class UserController {
         String passwordHash = argon2.hash(1, 1024, 1, user.getPassword());
         user.setPassword(passwordHash);
         return userService.create(user);
+    }
+
+    @PutMapping(path = "/{id}")
+    public User update(@RequestBody User user, @PathVariable Long id){
+         return userService.update(id, user);
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public void delete(@PathVariable Long id){
+        userService.delete(id);
     }
 }

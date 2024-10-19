@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: SegAProj
+  datasource:
+    url: jdbc:sqlserver://server-sql-seg-a.database.windows.net:1433;database=seg-a_db;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
+    username: postgres
+    password: rootqwerty123!
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      dialect: org.hibernate.dialect.SQLServerDialect
+server:
+  port: 9090

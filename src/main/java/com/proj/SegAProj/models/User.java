@@ -8,9 +8,9 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Table (name = "users", schema = "public",
-        uniqueConstraints = { @UniqueConstraint(name = "email", columnNames = "email"),
-                @UniqueConstraint(name = "idUni", columnNames = "id_uni")} )
+@Table (name = "users",
+        uniqueConstraints = { @UniqueConstraint(name = "email_uk_constraint", columnNames = "email"),
+                @UniqueConstraint(name = "id_uni_uk_constraint", columnNames = "id_uni") } )
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

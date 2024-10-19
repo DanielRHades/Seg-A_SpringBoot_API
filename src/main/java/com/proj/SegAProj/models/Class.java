@@ -1,5 +1,7 @@
 package com.proj.SegAProj.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.proj.SegAProj.enums.DayWeek;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,7 +12,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Entity
-@Table(name = "classes", schema = "public")
+@Table(name = "classes")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,9 +30,11 @@ public class Class {
     private DayWeek dayWeek;
 
     @Column(name = "start_time", nullable = false)
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime startTime;
 
     @Column(name = "end_time", nullable = false)
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime endTime;
 
     @ManyToOne

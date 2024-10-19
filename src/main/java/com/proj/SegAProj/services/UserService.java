@@ -20,6 +20,18 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    public List<User> findAll(){
+        return userRepository.findAll();
+    }
+
+    public User findById(Long id){
+        return userRepository.findById(id).orElseThrow();
+    }
+
+    public User findByIdUni (String idUni){
+        return userRepository.findByIdUni(idUni).orElseThrow();
+    }
+
     @Transactional
     public User create (User user){
         return userRepository.save(user);
@@ -38,13 +50,6 @@ public class UserService {
     @Transactional
     public void delete (Long id){
         userRepository.deleteById(id);
-    }
-    public List<User> findAll(){
-        return userRepository.findAll();
-    }
-
-    public User findById(Long id){
-        return userRepository.findById(id).orElseThrow();
     }
 
 }
