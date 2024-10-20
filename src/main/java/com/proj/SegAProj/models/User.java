@@ -6,8 +6,7 @@ import com.proj.SegAProj.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table (name = "users",
@@ -41,13 +40,22 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    @ManyToMany(mappedBy = "userHashClass")
-    private Set<Class> classHashUser = new HashSet<>();
+    @JoinTable(
+            name = "users_classes",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "class_id")
+    )
+    private List<Class> classListUser;
 
-    @ManyToMany(mappedBy = "userHashReservation")
-    private Set<Reservation> reservationHashUser = new HashSet<>();
-
-    //private List<Reservation> reservations;
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    @JoinTable(
+            name = "users_reservations",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "reservation_id")
+    )
+    private List<Reservation> reservationListUser;
 
 }

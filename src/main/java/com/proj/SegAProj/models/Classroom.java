@@ -1,14 +1,14 @@
 package com.proj.SegAProj.models;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
 
 @Entity
 @Table(name = "classrooms")
@@ -29,8 +29,10 @@ public class Classroom {
     private Integer capacity;
 
     @OneToMany(mappedBy = "classroomReservation")
-    private Set<Reservation> reservationHashClassroom = new HashSet<>();
+    @JsonIgnore
+    private List<Reservation> reservationListClassroom;
 
     @OneToMany(mappedBy = "classroomClass")
-    private Set<Class> classHashClassroom = new HashSet<>();
+    @JsonIgnore
+    private List<Class> classListClassroom;
 }

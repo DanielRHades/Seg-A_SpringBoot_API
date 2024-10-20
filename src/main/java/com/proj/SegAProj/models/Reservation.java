@@ -1,5 +1,9 @@
 package com.proj.SegAProj.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,15 +34,12 @@ public class Reservation {
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
 
-    @ManyToMany
-    @JoinTable(
-            name = "reservations_users",
-            joinColumns = @JoinColumn(name = "reservation_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private List<User> userHashReservation;
+    @ManyToMany(mappedBy = "reservationListUser")
+    @JsonIgnore
+    private List<User> userListReservation;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonInclude
     @JoinColumn(
             name = "classroom_id",
             referencedColumnName = "id"

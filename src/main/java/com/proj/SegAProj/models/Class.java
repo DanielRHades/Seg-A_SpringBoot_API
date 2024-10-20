@@ -1,7 +1,7 @@
 package com.proj.SegAProj.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonFormat;
+
+import com.fasterxml.jackson.annotation.*;
 import com.proj.SegAProj.enums.DayWeek;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,9 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
 
 @Entity
 @Table(name = "classes")
@@ -39,19 +38,12 @@ public class Class {
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime endTime;
 
-    @ManyToMany
-    @JoinTable(
-            name = "classes_users",
-            joinColumns = @JoinColumn(name = "class_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private Set<User> userHashClass = new HashSet<>();
+    @ManyToMany(mappedBy = "classListUser")
+    @JsonIgnore
+    private List<User> userListClass;
 
-    public void enrollUserToClass(User user){
-        userHashClass.add(user);
-    }
-
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonInclude
     @JoinColumn(
             name = "classroom_id",
             referencedColumnName = "id"

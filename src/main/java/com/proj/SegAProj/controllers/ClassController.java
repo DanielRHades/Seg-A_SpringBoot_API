@@ -27,20 +27,12 @@ public class ClassController {
     }
 
     @PostMapping
-    public Class create(@RequestBody Class classEntity){
-        return classService.create(classEntity);
+    public Class create(@RequestBody Class classEntity){return classService.create(classEntity);
     }
 
     @PutMapping(path = "/{id}")
     public Class update(@PathVariable Long id, @RequestBody Class classEntity){
         return classService.update(id, classEntity);
-    }
-
-    @PutMapping(path = "/{classId}/user/{userId}")
-    public Class enrollUserToClass(@PathVariable Long classId,
-                                   @PathVariable Long userId){
-
-        return classService.enrollUserToClass(classId, userId);
     }
 
     @PutMapping(path = "/{classId}/classroom/{classroomId}")
@@ -49,8 +41,14 @@ public class ClassController {
         return classService.assignClassroomToClass(classId, classroomId);
     }
 
+    @DeleteMapping(path = "/delete/classroomInClass/{id}")
+    public Class unassignClassroomToClass(@PathVariable Long id){
+        return classService.unassignClassroomToClass(id);
+    }
+
     @DeleteMapping(path = "/{id}")
     public void delete (@PathVariable Long id){
         classService.delete(id);
     }
+
 }

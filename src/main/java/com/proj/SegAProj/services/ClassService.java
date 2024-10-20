@@ -6,6 +6,7 @@ import com.proj.SegAProj.models.User;
 import com.proj.SegAProj.repositories.ClassRepository;
 import com.proj.SegAProj.repositories.ClassroomRepository;
 import com.proj.SegAProj.repositories.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,15 +19,12 @@ import java.util.Objects;
 public class ClassService {
 
     private final ClassRepository classRepository;
-    private final UserRepository userRepository;
     private final ClassroomRepository classroomRepository;
 
     @Autowired
     public ClassService (ClassRepository classRepository,
-                         UserRepository userRepository,
                          ClassroomRepository classroomRepository){
         this.classRepository = classRepository;
-        this.userRepository = userRepository;
         this.classroomRepository = classroomRepository;
     }
 
@@ -56,11 +54,8 @@ public class ClassService {
     }
 
     @Transactional
-    public Class enrollUserToClass(Long classId, Long userId){
-        Class classEntity = classRepository.findById(classId).orElseThrow(()->new RuntimeException("No existe la clase."));
-        User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("No existe el usuario"));
-        classEntity.enrollUserToClass(user);
-        return classRepository.save(classEntity);
+    public void delete (Long id){
+        classRepository.deleteById(id);
     }
 
     @Transactional
@@ -71,10 +66,11 @@ public class ClassService {
         return classRepository.save(classEntity);
     }
 
-
     @Transactional
-    public void delete (Long id){
-        classRepository.deleteById(id);
+    public Class unassignClassroomToClass(Long id){
+        Class classEntity = classRepository.findById(id).orElseThrow(()->new RuntimeException("No existe la clase."));
+        classEntity.setClassroomClass(null);
+        return classRepository.save(classEntity);
     }
 
 }
