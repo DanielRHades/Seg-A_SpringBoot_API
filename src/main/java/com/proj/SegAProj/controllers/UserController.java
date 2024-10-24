@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/idUni/{idUni}")
-    public User findByIdUni(@PathVariable String idUni){
+    public UserDTO findByIdUni(@PathVariable String idUni){
         return userService.findByIdUni(idUni);
     }
 

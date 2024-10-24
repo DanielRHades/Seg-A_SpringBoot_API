@@ -20,7 +20,7 @@ public class ClassroomService {
         this.classroomRepository = classroomRepository;
     }
 
-    public Classroom findbyId(Long id){
+    public Classroom findById(Long id){
         return classroomRepository.findById(id).orElseThrow();
     }
 
@@ -35,7 +35,7 @@ public class ClassroomService {
 
     @Transactional
     public  Classroom update(Long id, Classroom classroom){
-        var classroomPersisted = findbyId(id);
+        var classroomPersisted = findById(id);
         if(!Objects.equals(classroomPersisted.getId(), id)){
             return classroomPersisted;
         }

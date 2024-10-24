@@ -3,7 +3,6 @@ package com.proj.SegAProj.services;
 import com.proj.SegAProj.dto.ClassDTO;
 import com.proj.SegAProj.dto.UserDTO;
 import com.proj.SegAProj.models.Class;
-import com.proj.SegAProj.models.Classroom;
 import com.proj.SegAProj.models.Reservation;
 import com.proj.SegAProj.models.User;
 import com.proj.SegAProj.repositories.ClassRepository;
@@ -44,18 +43,17 @@ public class UserService {
     }
 
     public UserDTO findByIdWithClasses(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("No existe el usuario"));
-        return convertOneUserToDTOWithClasses(user);
+        return convertOneUserToDTOWithClasses(userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("No existe el usuario")));
     }
 
     public List<UserDTO> findAllWithClasses() {
-        List<User> user = userRepository.findAll();
-        return convertAllUserToDTOWithClasses(user);
+        return convertAllUserToDTOWithClasses(userRepository.findAll());
     }
 
-    public User findByIdUni (String idUni){
-        return userRepository.findByIdUni(idUni).orElseThrow();
+    public UserDTO findByIdUni (String idUni){
+        return convertOneUserToDTO(userRepository.findByIdUni(idUni)
+                .orElseThrow(()->new RuntimeException("No existe el usuario.")));
     }
 
     @Transactional

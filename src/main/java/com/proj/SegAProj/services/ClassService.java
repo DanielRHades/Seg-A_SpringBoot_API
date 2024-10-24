@@ -35,10 +35,8 @@ public class ClassService {
     }
 
     public ClassDTO findByIdWithUsers(Long id){
-        Class classEntity = classRepository.findById(id).orElseThrow(()->new RuntimeException(
-                "No existe esta clase."
-        ));
-        return convertOneClassToDTOWithUsers(classEntity);
+        return convertOneClassToDTOWithUsers(classRepository.findById(id)
+                .orElseThrow(()->new RuntimeException("No existe esta clase.")));
     }
 
     public List<ClassDTO> findAllWithUsers(){
