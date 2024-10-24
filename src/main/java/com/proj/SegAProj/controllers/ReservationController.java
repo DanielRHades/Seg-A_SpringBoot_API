@@ -1,7 +1,9 @@
 package com.proj.SegAProj.controllers;
 
+import com.proj.SegAProj.dto.ReservationDTO;
 import com.proj.SegAProj.models.Reservation;
 import com.proj.SegAProj.services.ReservationService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,37 +18,61 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
+    @Operation(summary = "Obtiene una reserva utilizando su ID.")
     @GetMapping(path = "/{id}")
     public Reservation findById(@PathVariable Long id){
         return reservationService.findById(id);
     }
 
+    @Operation(summary = "Obtiene una reserva utilizando su ID, AGREGANDO todos los usuarios de la reserva.")
+    @GetMapping(path = "/with-users/{id}")
+    public ReservationDTO findByIdWithUsers(@PathVariable Long id){
+        return reservationService.findByIdWithUsers(id);
+    }
+
+    @Operation(summary = "Obtiene todas las reservas.")
     @GetMapping
     public List<Reservation> findAll(){
         return reservationService.findAll();
     }
 
+    @Operation(summary = "Obtiene todas las reservas, AGREGANDO todos los usuarios de las reservas.")
+    @GetMapping(path = "/with-users")
+    public List<ReservationDTO> findAllWithUsers(){
+        return reservationService.findAllWithUsers();
+    }
+
+    @Operation(summary = "Crea una nueva reserva. NOTA IMPORTANTE: " +
+            "El campo classroomReservation debe ser null en la Request, la unión de la reserva con un salon se hace con su metodo especifico. " +
+            "Si se agrega alguna información en el campo sera nula y no se tomara en cuenta en la Request.")
     @PostMapping
     public Reservation create(@RequestBody Reservation reservation){
         return reservationService.create(reservation);
     }
 
+    @Operation(summary = "Actualiza una reserva utilizando su ID. NOTA IMPORTANTE: " +
+            "El campo classroomReservation debe ser null en la Request, la unión de la reserva con un salon se hace con su metodo especifico. " +
+            "Si se agrega alguna información en el campo sera nula y no se tomara en cuenta en la Request.")
     @PutMapping(path = "/{id}")
     public Reservation update (@PathVariable Long id, @RequestBody Reservation reservation){
         return reservationService.update(id, reservation);
     }
 
+    @Operation(summary = "Put encargado de asignar un salon a una reserva utilizando las ID de cada uno. " +
+            "Le agrega el id_classroom a la entidad en la tabla reservations basado en el principio de ManyToOne como Foreign Key.")
     @PutMapping(path = "/{reservationId}/classroom/{classroomId}")
     public Reservation assignClassroomToReservation(@PathVariable Long reservationId,
                                                     @PathVariable Long classroomId){
         return reservationService.assignClassroomToReservation(reservationId, classroomId);
     }
 
-    @DeleteMapping(path = "/delete/classroomInReservation/{id}")
+    @Operation(summary = "Delete encargado de borrar el salon previamente asignado a una reserva utilizando el ID de la reserva.")
+    @DeleteMapping(path = "/delete/classroom-in-reservation/{id}")
     public Reservation unassignClassroomToReservation(@PathVariable Long id){
         return reservationService.unassignClassroomToReservation(id);
     }
 
+    @Operation(summary = "Delete encargado de borrar una reserva utilizando su ID.")
     @DeleteMapping(path = "/{id}")
     public void delete (@PathVariable Long id){
         reservationService.delete(id);

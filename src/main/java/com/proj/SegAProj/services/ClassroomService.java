@@ -21,7 +21,8 @@ public class ClassroomService {
     }
 
     public Classroom findById(Long id){
-        return classroomRepository.findById(id).orElseThrow();
+        return classroomRepository.findById(id)
+                .orElseThrow(()->new RuntimeException("No existe este salon."));
     }
 
     public List<Classroom> findAll(){

@@ -4,7 +4,6 @@ import com.proj.SegAProj.enums.Role;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -16,8 +15,10 @@ public class UserDTO implements Serializable {
     private String lastName;
     private String email;
     private Set<ClassDTO> classSetHash;
+    private Set<ReservationDTO> reservationSetHash;
 
-    public UserDTO(Long id, String idUni, Role role, String firstName, String lastName, String email, Set<ClassDTO> classSetHash) {
+    public UserDTO(Long id, String idUni, Role role, String firstName, String lastName, String email,
+                   Set<ClassDTO> classSetHash, Set<ReservationDTO> reservationSetHash) {
         this.id = id;
         this.idUni = idUni;
         this.role = role;
@@ -25,6 +26,7 @@ public class UserDTO implements Serializable {
         this.lastName = lastName;
         this.email = email;
         this.classSetHash = classSetHash;
+        this.reservationSetHash = reservationSetHash;
     }
 
     public UserDTO(Long id, String idUni, Role role, String firstName, String lastName, String email) {

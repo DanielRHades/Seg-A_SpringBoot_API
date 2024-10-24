@@ -17,12 +17,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Transactional
     @Modifying
-    @Query(value = "DELETE FROM users_classes WHERE user_id = :id", nativeQuery = true)
-    void deleteRowFromUserClassTable(@Param("id") Long id);
+    @Query(value = "DELETE FROM users_classes WHERE user_id = :idUser AND class_id = :idClass", nativeQuery = true)
+    void deleteRowFromUserClassTable(@Param("idUser") Long idUser, @Param("idClass") Long idClass);
 
     @Transactional
     @Modifying
-    @Query(value = "DELETE FROM users_reservations WHERE user_id = :id", nativeQuery = true)
-    void deleteRowFromUserReservationTable(@Param("id") Long id);
+    @Query(value = "DELETE FROM users_reservations WHERE user_id = :idUser AND reservation_id = :idReservation", nativeQuery = true)
+    void deleteRowFromUserReservationTable(@Param("idUser") Long idUser, @Param("idReservation") Long idReservation);
 
 }

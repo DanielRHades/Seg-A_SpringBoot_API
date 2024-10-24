@@ -117,6 +117,7 @@ public class ClassService {
                 classEntity.getDayWeek(),
                 classEntity.getStartTime(),
                 classEntity.getEndTime(),
+                classEntity.getClassroomClass(),
                 userDTOS);
 
     }

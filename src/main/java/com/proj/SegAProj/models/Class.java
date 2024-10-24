@@ -2,6 +2,7 @@ package com.proj.SegAProj.models;
 
 
 import com.fasterxml.jackson.annotation.*;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,10 +33,12 @@ public class Class {
 
     @Column(name = "start_time", nullable = false)
     @JsonFormat(pattern = "HH:mm:ss")
+    @Schema(type = "string", example = "HH:mm:ss")
     private LocalTime startTime;
 
     @Column(name = "end_time", nullable = false)
     @JsonFormat(pattern = "HH:mm:ss")
+    @Schema(type = "string", example = "HH:mm:ss")
     private LocalTime endTime;
 
     @ManyToMany(mappedBy = "classListUser")

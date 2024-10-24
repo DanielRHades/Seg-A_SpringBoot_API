@@ -1,6 +1,7 @@
 package com.proj.SegAProj.services;
 
 import com.proj.SegAProj.dto.ClassDTO;
+import com.proj.SegAProj.dto.ReservationDTO;
 import com.proj.SegAProj.dto.UserDTO;
 import com.proj.SegAProj.models.Class;
 import com.proj.SegAProj.models.Reservation;
@@ -42,8 +43,18 @@ public class UserService {
                 .orElseThrow(()->new RuntimeException("No existe el usuario.")));
     }
 
+    public UserDTO findByIdUni (String idUni){
+        return convertOneUserToDTO(userRepository.findByIdUni(idUni)
+                .orElseThrow(()->new RuntimeException("No existe el usuario.")));
+    }
+
     public UserDTO findByIdWithClasses(Long userId) {
         return convertOneUserToDTOWithClasses(userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("No existe el usuario")));
+    }
+
+    public UserDTO findByIdWithReservations(Long userId) {
+        return convertOneUserToDTOWithReservations(userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("No existe el usuario")));
     }
 
@@ -51,9 +62,8 @@ public class UserService {
         return convertAllUserToDTOWithClasses(userRepository.findAll());
     }
 
-    public UserDTO findByIdUni (String idUni){
-        return convertOneUserToDTO(userRepository.findByIdUni(idUni)
-                .orElseThrow(()->new RuntimeException("No existe el usuario.")));
+    public List<UserDTO> findAllWithReservations() {
+        return convertAllUserToDTOWithReservations(userRepository.findAll());
     }
 
     @Transactional
@@ -85,9 +95,10 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteEnrollClassToUser(Long id){
-        User user = userRepository.findById(id).orElseThrow(()->new RuntimeException("No existe el usuario."));
-        userRepository.deleteRowFromUserClassTable(user.getId());
+    public void deleteEnrollClassToUser(Long idUser, Long idClass){
+        User user = userRepository.findById(idUser).orElseThrow(()->new RuntimeException("No existe el usuario."));
+        Class classEntity = classRepository.findById(idClass).orElseThrow(()->new RuntimeException("No existe la clase."));
+        userRepository.deleteRowFromUserClassTable(user.getId(), classEntity.getId());
     }
 
     @Transactional
@@ -99,9 +110,10 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteEnrollReservationToUser(Long id){
-        User user = userRepository.findById(id).orElseThrow(()->new RuntimeException("No existe el usuario."));
-        userRepository.deleteRowFromUserReservationTable(user.getId());
+    public void deleteEnrollReservationToUser(Long idUser, Long idReservation){
+        User user = userRepository.findById(idUser).orElseThrow(()->new RuntimeException("No existe el usuario."));
+        Reservation reservation = reservationRepository.findById(idReservation).orElseThrow(()-> new RuntimeException("No existe la reserva."));
+        userRepository.deleteRowFromUserReservationTable(user.getId(), reservation.getId());
     }
 
     @Transactional
@@ -134,6 +146,16 @@ public class UserService {
         }
         return userList;
     }
+
+    @Transactional
+    public List<UserDTO> convertAllUserToDTOWithReservations(List<User> users){
+        List<UserDTO> userList = new ArrayList<>();
+        for (User user : users){
+            userList.add(convertOneUserToDTOWithReservations(user));
+        }
+        return userList;
+    }
+
     @Transactional
     public UserDTO convertOneUserToDTOWithClasses(User user) {
         Set<ClassDTO> classDTOs = user.getClassListUser().stream()
@@ -141,7 +163,8 @@ public class UserService {
                         classEntity.getName(),
                         classEntity.getDayWeek(),
                         classEntity.getStartTime(),
-                        classEntity.getEndTime()))
+                        classEntity.getEndTime(),
+                        classEntity.getClassroomClass()))
                 .collect(Collectors.toSet());
 
         return new UserDTO(
@@ -151,7 +174,30 @@ public class UserService {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
-                classDTOs
+                classDTOs,
+                null
+        );
+    }
+
+    @Transactional
+    public UserDTO convertOneUserToDTOWithReservations(User user){
+        Set<ReservationDTO> reservationDTOs = user.getReservationListUser().stream()
+                .map(reservation -> new ReservationDTO(reservation.getId(),
+                        reservation.getReservationDate(),
+                        reservation.getStartTime(),
+                        reservation.getEndTime(),
+                        reservation.getClassroomReservation()))
+                .collect(Collectors.toSet());
+
+        return new UserDTO(
+                user.getId(),
+                user.getIdUni(),
+                user.getRole(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                null,
+                reservationDTOs
         );
     }
 }
