@@ -1,7 +1,9 @@
 package com.proj.SegAProj.controllers;
 
+import com.proj.SegAProj.dto.ClassDTO;
 import com.proj.SegAProj.models.Class;
 import com.proj.SegAProj.services.ClassService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +21,17 @@ public class ClassController {
     @GetMapping(path = "/{id}")
     public Class findById(@PathVariable Long id){
         return classService.findById(id);
+    }
+
+    @GetMapping(path = "/dto/{id}")
+    public ResponseEntity<ClassDTO> findByIdWithUsers(@PathVariable Long id){
+        return ResponseEntity.ok(classService.findByIdWithUsers(id));
+    }
+
+    @GetMapping(path = "/dto")
+    public List<ClassDTO> findAllWithUsers(){
+        return classService.findAllWithUsers();
+
     }
 
     @GetMapping

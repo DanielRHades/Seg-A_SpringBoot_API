@@ -1,19 +1,21 @@
 package com.proj.SegAProj.services;
 
+import com.proj.SegAProj.dto.ClassDTO;
+import com.proj.SegAProj.dto.UserDTO;
 import com.proj.SegAProj.models.Class;
 import com.proj.SegAProj.models.Classroom;
-import com.proj.SegAProj.models.User;
 import com.proj.SegAProj.repositories.ClassRepository;
 import com.proj.SegAProj.repositories.ClassroomRepository;
-import com.proj.SegAProj.repositories.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ClassService {
@@ -30,6 +32,18 @@ public class ClassService {
 
     public Class findById(Long id){
         return classRepository.findById(id).orElseThrow();
+    }
+
+    public ClassDTO findByIdWithUsers(Long id){
+        Class classEntity = classRepository.findById(id).orElseThrow(()->new RuntimeException(
+                "No existe esta clase."
+        ));
+        return convertOneClassToDTOWithUsers(classEntity);
+    }
+
+    public List<ClassDTO> findAllWithUsers(){
+        return convertAllClassesToDTOWithUsers(findAll());
+
     }
 
     public List<Class> findAll(){
@@ -60,8 +74,17 @@ public class ClassService {
 
     @Transactional
     public Class assignClassroomToClass(Long classId, Long classroomId){
-        Class classEntity = classRepository.findById(classId).orElseThrow(()->new RuntimeException("No existe la clase."));
+        Class classEntity = findById(classId);
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(()->new RuntimeException("No existe el usuario"));
+        List<Class> classList = classroom.getClassListClassroom();
+        for (Class cls : classList){
+            boolean interference = classEntity.getDayWeek().equals(cls.getDayWeek()) &&
+                    classEntity.getStartTime().isBefore(cls.getEndTime()) &&
+                    classEntity.getEndTime().isAfter(cls.getStartTime());
+            if (interference){
+                throw new RuntimeException("Existe una clase en ese salon, a esa hora.");
+            }
+        }
         classEntity.setClassroomClass(classroom);
         return classRepository.save(classEntity);
     }
@@ -71,6 +94,33 @@ public class ClassService {
         Class classEntity = classRepository.findById(id).orElseThrow(()->new RuntimeException("No existe la clase."));
         classEntity.setClassroomClass(null);
         return classRepository.save(classEntity);
+    }
+
+    public List<ClassDTO> convertAllClassesToDTOWithUsers(List<Class> classList){
+        List<ClassDTO> classDTOS = new ArrayList<>();
+        for (Class classEntity : classList){
+            classDTOS.add(convertOneClassToDTOWithUsers(classEntity));
+        }
+        return classDTOS;
+    }
+
+    public ClassDTO convertOneClassToDTOWithUsers(Class classEntity){
+        Set<UserDTO> userDTOS = classEntity.getUserListClass().stream().map(
+                user -> new UserDTO(user.getId(),
+                        user.getIdUni(),
+                        user.getRole(),
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getEmail()))
+                .collect(Collectors.toSet());
+
+        return new ClassDTO(classEntity.getId(),
+                classEntity.getName(),
+                classEntity.getDayWeek(),
+                classEntity.getStartTime(),
+                classEntity.getEndTime(),
+                userDTOS);
+
     }
 
 }

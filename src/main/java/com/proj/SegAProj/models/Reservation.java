@@ -1,9 +1,6 @@
 package com.proj.SegAProj.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonIncludeProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,12 +23,15 @@ public class Reservation {
     private Long id;
 
     @Column(name = "reservation_date", nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate reservationDate;
 
     @Column(name = "start_time", nullable = false)
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime startTime;
 
     @Column(name = "end_time", nullable = false)
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime endTime;
 
     @ManyToMany(mappedBy = "reservationListUser")

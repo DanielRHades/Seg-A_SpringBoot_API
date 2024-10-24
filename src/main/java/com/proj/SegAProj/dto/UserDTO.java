@@ -26,4 +26,13 @@ public class UserDTO implements Serializable {
         this.email = email;
         this.classSetHash = classSetHash;
     }
+
+    public UserDTO(Long id, String idUni, Role role, String firstName, String lastName, String email) {
+        this.id = id;
+        this.idUni = idUni;
+        this.role = role;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+    }
 }

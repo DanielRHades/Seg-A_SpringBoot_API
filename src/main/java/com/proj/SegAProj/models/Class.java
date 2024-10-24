@@ -2,12 +2,12 @@ package com.proj.SegAProj.models;
 
 
 import com.fasterxml.jackson.annotation.*;
-import com.proj.SegAProj.enums.DayWeek;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class Class {
     private String name;
 
     @Column(name = "day_week", nullable = false)
-    private DayWeek dayWeek;
+    private DayOfWeek dayWeek;
 
     @Column(name = "start_time", nullable = false)
     @JsonFormat(pattern = "HH:mm:ss")

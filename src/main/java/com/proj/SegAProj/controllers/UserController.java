@@ -22,14 +22,13 @@ public class UserController {
     }
 
     @GetMapping(path = "/id/{id}")
-    public User findById(@PathVariable Long id){
+    public UserDTO findById(@PathVariable Long id){
         return userService.findById(id);
     }
 
     @GetMapping(path = "/id/dto/{id}")
-    public ResponseEntity<UserDTO> findByIdDTO (@PathVariable Long id){
-        UserDTO userDTO = userService.findByIdDTO(id);
-        return ResponseEntity.ok(userDTO);
+    public UserDTO findByIdWithClasses (@PathVariable Long id){
+        return userService.findByIdWithClasses(id);
     }
 
     @GetMapping(path = "/idUni/{idUni}")
@@ -38,12 +37,12 @@ public class UserController {
     }
 
     @GetMapping(path = "/dto")
-    public List<UserDTO> findAllDTO (){
-        return userService.findAllDTO();
+    public List<UserDTO> findAllWithClasses (){
+        return userService.findAllWithClasses();
     }
 
     @GetMapping
-    public List<User> findAll(){
+    public List<UserDTO> findAll(){
         return userService.findAll();
     }
 
@@ -66,9 +65,21 @@ public class UserController {
         return userService.enrollClassToUser(userId, classId);
     }
 
+    @PutMapping(path = "/{userId}/reservation/{reservationId}")
+    public User enrollUserToReservation(@PathVariable Long userId,
+                                        @PathVariable Long reservationId){
+        return userService.enrollReservationToUser(userId, reservationId);
+    }
+
     @DeleteMapping(path = "/delete/UserClass/{id}")
     public void deleteEnrollUserToClass(@PathVariable Long id){
         userService.deleteEnrollClassToUser(id);
+    }
+
+
+    @DeleteMapping(path = "/delete/UserReservation/{id}")
+    public void deleteEnrollUserToReservation(@PathVariable Long id){
+        userService.deleteEnrollReservationToUser(id);
     }
 
     @DeleteMapping(path = "/{id}")
