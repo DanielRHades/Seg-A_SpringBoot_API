@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @Operation(summary = "Obtener un usuario por su idUni.")
-    @GetMapping(path = "/idUni/{idUni}")
+    @GetMapping(path = "/id-uni/{idUni}")
     public UserDTO findByIdUni(@PathVariable String idUni){
         return userService.findByIdUni(idUni);
     }
