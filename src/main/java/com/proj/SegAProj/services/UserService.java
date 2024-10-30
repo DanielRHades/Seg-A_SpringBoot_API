@@ -11,6 +11,7 @@ import com.proj.SegAProj.repositories.ReservationRepository;
 import com.proj.SegAProj.repositories.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +28,12 @@ public class UserService {
     private final ClassRepository classRepository;
     private final ReservationRepository reservationRepository;
 
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+
     @Autowired
-    public UserService (UserRepository userRepository, ClassRepository classRepository, ReservationRepository reservationRepository){
+    public UserService (UserRepository userRepository,
+                        ClassRepository classRepository,
+                        ReservationRepository reservationRepository){
         this.userRepository = userRepository;
         this.classRepository = classRepository;
         this.reservationRepository = reservationRepository;
@@ -68,6 +73,7 @@ public class UserService {
 
     @Transactional
     public User create (User user){
+        user.setPassword(encoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
@@ -77,6 +83,7 @@ public class UserService {
         if (!Objects.equals(userPersisted.getId(), id)) {
             return userPersisted;
         }
+        user.setPassword(encoder.encode(user.getPassword()));
         BeanUtils.copyProperties(user, userPersisted, "id");
         return userRepository.save(userPersisted);
     }
