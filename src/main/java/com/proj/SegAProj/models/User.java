@@ -15,7 +15,7 @@ import java.util.List;
 @Entity
 @Table (name = "users",
         uniqueConstraints = { @UniqueConstraint(name = "email_uk_constraint", columnNames = "email"),
-                @UniqueConstraint(name = "id_uni_uk_constraint", columnNames = "id_uni") } )
+                @UniqueConstraint(name = "uni_id_uk_constraint", columnNames = "uni_id") } )
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,8 +26,16 @@ public class User implements UserDetails {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @Column (name = "id_uni", nullable = false)
-    private String idUni;
+    @Column (name = "uni_id", nullable = false)
+    private String uniId;
+
+    @PrePersist
+    @PreUpdate
+    public void validateIdUni() {
+        if (uniId == null || !uniId.startsWith("U00")) {
+            throw new IllegalArgumentException("El idUni debe comenzar con 'U00'.");
+        }
+    }
 
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -48,11 +56,11 @@ public class User implements UserDetails {
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     @JoinTable(
-            name = "users_classes",
+            name = "users_subjects",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "class_id")
+            inverseJoinColumns = @JoinColumn(name = "subject_id")
     )
-    private List<Class> classListUser;
+    private List<Subject> subjectListUser;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
@@ -63,11 +71,14 @@ public class User implements UserDetails {
     )
     private List<Reservation> reservationListUser;
 
+    @OneToMany(mappedBy = "userAssist")
+    @JsonIgnore
+    private List<UserSubjectAssist> subjectAssistListUser;
 
     @Override
     @JsonIgnore
     public String getUsername() {
-        return idUni;
+        return uniId;
     }
 
     @Override

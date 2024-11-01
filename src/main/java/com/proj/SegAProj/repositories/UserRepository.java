@@ -13,16 +13,16 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findByIdUni(String idUni);
+    Optional<User> findByUniId(String uniId);
 
     @Transactional
     @Modifying
-    @Query(value = "DELETE FROM users_classes WHERE user_id = :idUser AND class_id = :idClass", nativeQuery = true)
-    void deleteRowFromUserClassTable(@Param("idUser") Long idUser, @Param("idClass") Long idClass);
+    @Query(value = "DELETE FROM users_subjects WHERE user_id = :userId AND subject_id = :subjectId", nativeQuery = true)
+    void deleteRowFromUserSubjectTable(@Param("userId") Long userId, @Param("subjectId") Long subjectId);
 
     @Transactional
     @Modifying
-    @Query(value = "DELETE FROM users_reservations WHERE user_id = :idUser AND reservation_id = :idReservation", nativeQuery = true)
-    void deleteRowFromUserReservationTable(@Param("idUser") Long idUser, @Param("idReservation") Long idReservation);
+    @Query(value = "DELETE FROM users_reservations WHERE user_id = :userId AND reservation_id = :reservationId", nativeQuery = true)
+    void deleteRowFromUserReservationTable(@Param("userId") Long userId, @Param("reservationId") Long reservationId);
 
 }

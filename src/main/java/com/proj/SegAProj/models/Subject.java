@@ -14,16 +14,19 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "classes")
+@Table(name = "subjects")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Class {
+public class Subject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false)
     private Long id;
+
+    @Column(name = "nrc", nullable = false)
+    private String nrc;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -41,9 +44,9 @@ public class Class {
     @Schema(type = "string", example = "HH:mm:ss")
     private LocalTime endTime;
 
-    @ManyToMany(mappedBy = "classListUser")
+    @ManyToMany(mappedBy = "subjectListUser")
     @JsonIgnore
-    private List<User> userListClass;
+    private List<User> userListSubject;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonInclude
@@ -51,6 +54,10 @@ public class Class {
             name = "classroom_id",
             referencedColumnName = "id"
     )
-    private Classroom classroomClass;
+    private Classroom classroomSubject;
+
+    @OneToMany(mappedBy = "subjectAssist")
+    @JsonIgnore
+    private List<UserSubjectAssist> subjectAssistListSubject;
 
 }

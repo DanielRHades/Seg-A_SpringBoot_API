@@ -34,4 +34,11 @@ public class ReservationDTO implements Serializable {
         this.classroomReservation = classroomReservation;
         this.userSetHash = userSetHash;
     }
+
+    public ReservationDTO(Long id, LocalDate reservationDate, LocalTime startTime, LocalTime endTime) {
+        this.id = id;
+        this.reservationDate = reservationDate;
+        this.startTime = startTime;
+        this.endTime = endTime;;
+    }
 }

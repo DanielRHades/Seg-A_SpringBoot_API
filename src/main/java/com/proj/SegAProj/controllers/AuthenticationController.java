@@ -4,6 +4,7 @@ package com.proj.SegAProj.controllers;
 import com.proj.SegAProj.models.AuthenticationRequest;
 import com.proj.SegAProj.models.AuthenticationResponse;
 import com.proj.SegAProj.services.AuthenticationService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Inicio de sesión, es necesario uniId y password.")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest request) {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }

@@ -1,12 +1,12 @@
 package com.proj.SegAProj.services;
 
-import com.proj.SegAProj.dto.ClassDTO;
+import com.proj.SegAProj.dto.SubjectDTO;
 import com.proj.SegAProj.dto.ReservationDTO;
 import com.proj.SegAProj.dto.UserDTO;
-import com.proj.SegAProj.models.Class;
+import com.proj.SegAProj.models.Subject;
 import com.proj.SegAProj.models.Reservation;
 import com.proj.SegAProj.models.User;
-import com.proj.SegAProj.repositories.ClassRepository;
+import com.proj.SegAProj.repositories.SubjectRepository;
 import com.proj.SegAProj.repositories.ReservationRepository;
 import com.proj.SegAProj.repositories.UserRepository;
 import org.springframework.beans.BeanUtils;
@@ -25,17 +25,17 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final ClassRepository classRepository;
+    private final SubjectRepository subjectRepository;
     private final ReservationRepository reservationRepository;
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     @Autowired
     public UserService (UserRepository userRepository,
-                        ClassRepository classRepository,
+                        SubjectRepository subjectRepository,
                         ReservationRepository reservationRepository){
         this.userRepository = userRepository;
-        this.classRepository = classRepository;
+        this.subjectRepository = subjectRepository;
         this.reservationRepository = reservationRepository;
     }
 
@@ -48,13 +48,13 @@ public class UserService {
                 .orElseThrow(()->new RuntimeException("No existe el usuario.")));
     }
 
-    public UserDTO findByIdUni (String idUni){
-        return convertOneUserToDTO(userRepository.findByIdUni(idUni)
+    public UserDTO findByUniId (String uniId){
+        return convertOneUserToDTO(userRepository.findByUniId(uniId)
                 .orElseThrow(()->new RuntimeException("No existe el usuario.")));
     }
 
-    public UserDTO findByIdWithClasses(Long userId) {
-        return convertOneUserToDTOWithClasses(userRepository.findById(userId)
+    public UserDTO findByIdWithSubjects(Long userId) {
+        return convertOneUserToDTOWithSubjects(userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("No existe el usuario")));
     }
 
@@ -63,8 +63,8 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("No existe el usuario")));
     }
 
-    public List<UserDTO> findAllWithClasses() {
-        return convertAllUserToDTOWithClasses(userRepository.findAll());
+    public List<UserDTO> findAllWithSubjects() {
+        return convertAllUserToDTOWithSubjects(userRepository.findAll());
     }
 
     public List<UserDTO> findAllWithReservations() {
@@ -84,7 +84,7 @@ public class UserService {
             return userPersisted;
         }
         user.setPassword(encoder.encode(user.getPassword()));
-        BeanUtils.copyProperties(user, userPersisted, "id");
+        BeanUtils.copyProperties(user, userPersisted, "id", "uniId");
         return userRepository.save(userPersisted);
     }
 
@@ -94,18 +94,19 @@ public class UserService {
     }
 
     @Transactional
-    public User enrollClassToUser(Long userId, Long classId){
+    public User enrollSubjectToUser(Long userId, Long subjectId){
         User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("No existe el usuario"));
-        Class classEntity = classRepository.findById(classId).orElseThrow(()->new RuntimeException("No existe la clase."));
-        user.getClassListUser().add(classEntity);
+        Subject subject = subjectRepository.findById(subjectId).orElseThrow(()->new RuntimeException("No existe la asignatura."));
+        user.getSubjectListUser().add(subject);
         return userRepository.save(user);
     }
 
     @Transactional
-    public void deleteEnrollClassToUser(Long idUser, Long idClass){
-        User user = userRepository.findById(idUser).orElseThrow(()->new RuntimeException("No existe el usuario."));
-        Class classEntity = classRepository.findById(idClass).orElseThrow(()->new RuntimeException("No existe la clase."));
-        userRepository.deleteRowFromUserClassTable(user.getId(), classEntity.getId());
+    public void deleteEnrollSubjectToUser(Long userId, Long subjectId){
+        User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("No existe el usuario."));
+        Subject subject = subjectRepository.findById(subjectId).orElseThrow(()->new RuntimeException("No existe la asignatura."));
+        user.getSubjectListUser().remove(subject);
+        userRepository.deleteRowFromUserSubjectTable(user.getId(), subject.getId());
     }
 
     @Transactional
@@ -127,7 +128,7 @@ public class UserService {
     public UserDTO convertOneUserToDTO(User user){
         return new UserDTO(
                 user.getId(),
-                user.getIdUni(),
+                user.getUniId(),
                 user.getRole(),
                 user.getFirstName(),
                 user.getLastName(),
@@ -146,10 +147,10 @@ public class UserService {
     }
 
     @Transactional
-    public List<UserDTO> convertAllUserToDTOWithClasses(List<User> users){
+    public List<UserDTO> convertAllUserToDTOWithSubjects(List<User> users){
         List<UserDTO> userList = new ArrayList<>();
         for (User user : users){
-             userList.add(convertOneUserToDTOWithClasses(user));
+             userList.add(convertOneUserToDTOWithSubjects(user));
         }
         return userList;
     }
@@ -164,24 +165,25 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO convertOneUserToDTOWithClasses(User user) {
-        Set<ClassDTO> classDTOs = user.getClassListUser().stream()
-                .map(classEntity -> new ClassDTO(classEntity.getId(),
-                        classEntity.getName(),
-                        classEntity.getDayWeek(),
-                        classEntity.getStartTime(),
-                        classEntity.getEndTime(),
-                        classEntity.getClassroomClass()))
+    public UserDTO convertOneUserToDTOWithSubjects(User user) {
+        Set<SubjectDTO> subjectDTOS = user.getSubjectListUser().stream()
+                .map(subject -> new SubjectDTO(subject.getId(),
+                        subject.getNrc(),
+                        subject.getName(),
+                        subject.getDayWeek(),
+                        subject.getStartTime(),
+                        subject.getEndTime(),
+                        subject.getClassroomSubject()))
                 .collect(Collectors.toSet());
 
         return new UserDTO(
                 user.getId(),
-                user.getIdUni(),
+                user.getUniId(),
                 user.getRole(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
-                classDTOs,
+                subjectDTOS,
                 null
         );
     }
@@ -198,7 +200,7 @@ public class UserService {
 
         return new UserDTO(
                 user.getId(),
-                user.getIdUni(),
+                user.getUniId(),
                 user.getRole(),
                 user.getFirstName(),
                 user.getLastName(),

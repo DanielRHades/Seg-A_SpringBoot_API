@@ -1,5 +1,6 @@
 package com.proj.SegAProj.controllers;
 
+import com.proj.SegAProj.dto.ClassroomDTO;
 import com.proj.SegAProj.models.Classroom;
 import com.proj.SegAProj.services.ClassroomService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,10 +26,34 @@ public class ClassroomController {
         return classroomService.findById(id);
     }
 
+    @Operation(summary = "Obtiene un salon por su ID, agregando las asignaturas dictadas en el salon.")
+    @GetMapping(path = "/with-subjects/{id}")
+    public ClassroomDTO findByIdWithSubjects(@PathVariable Long id){
+        return classroomService.findByIdWithSubjects(id);
+    }
+
+    @Operation(summary = "Obtiene un salon por su ID, agregando las reservas programadas en el salon.")
+    @GetMapping(path = "/with-reservations/{id}")
+    public ClassroomDTO findByIdWithReservations(@PathVariable Long id){
+        return classroomService.findByIdWithReservations(id);
+    }
+
     @Operation(summary = "Obtiene todos los salones.")
     @GetMapping
     public List<Classroom> findAll(){
         return  classroomService.findAll();
+    }
+
+    @Operation(summary = "Obtiene todos los salones, agregando las asignaturas dictadas del salon.")
+    @GetMapping(path = "/with-subjects")
+    public List<ClassroomDTO> findAllWithSubjects(){
+        return classroomService.findAllWithSubjects();
+    }
+
+    @Operation(summary = "Obtiene todos los salones, agregando las reservas programadas del salon.")
+    @GetMapping(path = "/with-reservations")
+    public List<ClassroomDTO> findAllWithReservations(){
+        return classroomService.findAllWithReservations();
     }
 
     @Operation(summary = "Crea un salon nuevo.")

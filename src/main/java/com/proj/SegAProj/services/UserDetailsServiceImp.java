@@ -19,7 +19,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByIdUni(username)
+        return userRepository.findByUniId(username)
                 .orElseThrow(()->new RuntimeException("No existe el usuario.")) ;
     }
 }

@@ -2,10 +2,9 @@ package com.proj.SegAProj.services;
 
 import com.proj.SegAProj.dto.ReservationDTO;
 import com.proj.SegAProj.dto.UserDTO;
-import com.proj.SegAProj.models.Class;
+import com.proj.SegAProj.models.Subject;
 import com.proj.SegAProj.models.Classroom;
 import com.proj.SegAProj.models.Reservation;
-import com.proj.SegAProj.models.User;
 import com.proj.SegAProj.repositories.ClassroomRepository;
 import com.proj.SegAProj.repositories.ReservationRepository;
 import org.springframework.beans.BeanUtils;
@@ -74,11 +73,11 @@ public class ReservationService {
         Reservation reservation = findById(idReservation);
         Classroom classroom = classroomRepository.findById(idClassroom)
                 .orElseThrow(()->new RuntimeException("No existe esta clase."));
-        List<Class> classList = classroom.getClassListClassroom();
-        for (Class classEntity : classList){
-            boolean interference = reservation.getReservationDate().getDayOfWeek().equals(classEntity.getDayWeek()) &&
-                    reservation.getStartTime().isBefore(classEntity.getEndTime()) &&
-                    reservation.getEndTime().isAfter(classEntity.getStartTime());
+        List<Subject> subjectList = classroom.getSubjectListClassroom();
+        for (Subject subject : subjectList){
+            boolean interference = reservation.getReservationDate().getDayOfWeek().equals(subject.getDayWeek()) &&
+                    reservation.getStartTime().isBefore(subject.getEndTime()) &&
+                    reservation.getEndTime().isAfter(subject.getStartTime());
             if (interference){
                 throw new RuntimeException("Existe una clase en ese salon, a esa hora.");
             }
@@ -107,7 +106,7 @@ public class ReservationService {
     public ReservationDTO convertOneReservationToDTOWithUsers(Reservation reservation){
         Set<UserDTO> userDTOs = reservation.getUserListReservation().stream().map(
                 user -> new UserDTO(user.getId(),
-                        user.getIdUni(),
+                        user.getUniId(),
                         user.getRole(),
                         user.getFirstName(),
                         user.getLastName(),

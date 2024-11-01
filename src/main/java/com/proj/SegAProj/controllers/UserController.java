@@ -25,15 +25,15 @@ public class UserController {
     }
 
     @Operation(summary = "Obtener un usuario por su idUni.")
-    @GetMapping(path = "/id-uni/{idUni}")
-    public UserDTO findByIdUni(@PathVariable String idUni){
-        return userService.findByIdUni(idUni);
+    @GetMapping(path = "/uni-id/{uniId}")
+    public UserDTO findByUniId(@PathVariable String uniId){
+        return userService.findByUniId(uniId);
     }
 
-    @Operation(summary = "Obtener un usuario utilizando su ID, AGREGANDO todas las clases de este usuario.")
-    @GetMapping(path = "/id/with-classes/{id}")
-    public UserDTO findByIdWithClasses (@PathVariable Long id){
-        return userService.findByIdWithClasses(id);
+    @Operation(summary = "Obtener un usuario utilizando su ID, AGREGANDO todas las asignaturas de este usuario.")
+    @GetMapping(path = "/id/with-subjects/{id}")
+    public UserDTO findByIdWithSubjects (@PathVariable Long id){
+        return userService.findByIdWithSubjects(id);
     }
 
     @Operation(summary = "Obtener un usuario utilizando su ID, AGREGANDO todas las reservas de este usuario.")
@@ -42,10 +42,10 @@ public class UserController {
         return userService.findByIdWithReservations(id);
     }
 
-    @Operation(summary = "Obtener todos los usuarios, AGREGANDO todas las clases de los usuarios.")
-    @GetMapping(path = "/with-classes")
-    public List<UserDTO> findAllWithClasses (){
-        return userService.findAllWithClasses();
+    @Operation(summary = "Obtener todos los usuarios, AGREGANDO todas las asignaturas de los usuarios.")
+    @GetMapping(path = "/with-subjects")
+    public List<UserDTO> findAllWithSubjects (){
+        return userService.findAllWithSubjects();
     }
 
     @Operation(summary = "Obtener todos los usuarios, AGREGANDO todas las reservas de los usuarios.")
@@ -72,11 +72,11 @@ public class UserController {
          return userService.update(id, user);
     }
 
-    @Operation(summary = "Crea la relación entre un usuario y una clase en la tabla users_classes, basado en la relación ManyToMany, utilizando la ID de cada uno.")
-    @PutMapping(path = "/{userId}/class/{classId}")
-    public User enrollUserToClass(@PathVariable Long userId,
-                                   @PathVariable Long classId){
-        return userService.enrollClassToUser(userId, classId);
+    @Operation(summary = "Crea la relación entre un usuario y una asignatura en la tabla users_subjects, basado en la relación ManyToMany, utilizando la ID de cada uno.")
+    @PutMapping(path = "/{userId}/subject/{subjectId}")
+    public User enrollUserToSubject(@PathVariable Long userId,
+                                   @PathVariable Long subjectId){
+        return userService.enrollSubjectToUser(userId, subjectId);
     }
 
     @Operation(summary = "Crea la relación entre un usuario y una reserva en la tabla users_reservations, basado en la relación ManyToMany, utilizando la ID de cada uno.")
@@ -86,16 +86,16 @@ public class UserController {
         return userService.enrollReservationToUser(userId, reservationId);
     }
 
-    @Operation(summary = "Elimina la fila que contiene la relación entre un usuario y una clase de la tabla users_classes, utilizando la ID de cada uno.")
-    @DeleteMapping(path = "/delete-user-class/user/{idUser}/class/{idClass}")
-    public void deleteEnrollUserToClass(@PathVariable Long idUser, @PathVariable Long idClass){
-        userService.deleteEnrollClassToUser(idUser, idClass);
+    @Operation(summary = "Elimina la fila que contiene la relación entre un usuario y una asignatura de la tabla users_subjects, utilizando la ID de cada uno.")
+    @DeleteMapping(path = "/delete-user-subject/user/{userId}/subject/{subjectId}")
+    public void deleteEnrollUserToSubject(@PathVariable Long userId, @PathVariable Long subjectId){
+        userService.deleteEnrollSubjectToUser(userId, subjectId);
     }
 
     @Operation(summary = "Elimina la fila que contiene la relación entre un usuario y una reserva de la tabla users_reservations, utilizando la ID de cada uno.")
-    @DeleteMapping(path = "/delete-user-reservation/user/{idUser}/reservation/{idReservation}")
-    public void deleteEnrollUserToReservation(@PathVariable Long idUser, @PathVariable Long idReservation){
-        userService.deleteEnrollReservationToUser(idUser, idReservation);
+    @DeleteMapping(path = "/delete-user-reservation/user/{userId}/reservation/{reservationId}")
+    public void deleteEnrollUserToReservation(@PathVariable Long userId, @PathVariable Long reservationId){
+        userService.deleteEnrollReservationToUser(userId, reservationId);
     }
 
     @Operation(summary = "Elimina un usuario utilizando su ID.")

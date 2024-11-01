@@ -25,11 +25,11 @@ public class AuthenticationService {
     public AuthenticationResponse authenticate(AuthenticationRequest request){
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getIdUni(),
+                        request.getUniId(),
                         request.getPassword()
                 )
         );
-        var user = userRepository.findByIdUni(request.getIdUni())
+        var user = userRepository.findByUniId(request.getUniId())
                 .orElseThrow(()-> new RuntimeException("No existe el usuario."));
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
