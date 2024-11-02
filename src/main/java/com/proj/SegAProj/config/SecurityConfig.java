@@ -1,6 +1,5 @@
 package com.proj.SegAProj.config;
 
-import com.proj.SegAProj.repositories.UserRepository;
 import com.proj.SegAProj.services.UserDetailsServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,8 +13,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -38,13 +35,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/v1/auth/**")
+                        .requestMatchers("/api/v2/auth/**")
                         .permitAll()
-                        .requestMatchers("/api/v1/user/**").hasRole("ADMIN")
-                        .requestMatchers("/api/v1/classroom/**").hasAnyRole("ADMIN", "RASP")
-                        .requestMatchers("/api/v1/subject/**").hasAnyRole("ADMIN", "RASP")
-                        .requestMatchers("/api/v1/reservation/**").hasAnyRole("ADMIN", "RASP")
-                        .requestMatchers("/api/v1/assist**").hasAnyRole("ADMIN", "RASP", "USER")
+                        .requestMatchers("/api/v2/user/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v2/classroom/**").hasAnyRole("ADMIN", "RASP")
+                        .requestMatchers("/api/v2/subject/**").hasAnyRole("ADMIN", "RASP")
+                        .requestMatchers("/api/v2/reservation/**").hasAnyRole("ADMIN", "RASP")
+                        .requestMatchers("/api/v2/lesson/**").hasAnyRole("ADMIN", "RASP")
+                        .requestMatchers("/api/v2/assist**").hasAnyRole("ADMIN", "RASP", "USER")
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

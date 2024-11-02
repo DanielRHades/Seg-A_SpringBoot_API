@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/classroom")
+@RequestMapping("/api/v2/classroom")
 public class ClassroomController {
 
     private final ClassroomService classroomService;
@@ -26,10 +26,10 @@ public class ClassroomController {
         return classroomService.findById(id);
     }
 
-    @Operation(summary = "Obtiene un salon por su ID, agregando las asignaturas dictadas en el salon.")
-    @GetMapping(path = "/with-subjects/{id}")
-    public ClassroomDTO findByIdWithSubjects(@PathVariable Long id){
-        return classroomService.findByIdWithSubjects(id);
+    @Operation(summary = "Obtiene un salon por su ID, agregando las lecciones dictadas en el salon.")
+    @GetMapping(path = "/with-lessons/{id}")
+    public ClassroomDTO findByIdWithLessons(@PathVariable Long id){
+        return classroomService.findByIdWithLessons(id);
     }
 
     @Operation(summary = "Obtiene un salon por su ID, agregando las reservas programadas en el salon.")
@@ -44,10 +44,10 @@ public class ClassroomController {
         return  classroomService.findAll();
     }
 
-    @Operation(summary = "Obtiene todos los salones, agregando las asignaturas dictadas del salon.")
+    @Operation(summary = "Obtiene todos los salones, agregando las lecciones dictadas en los salones.")
     @GetMapping(path = "/with-subjects")
-    public List<ClassroomDTO> findAllWithSubjects(){
-        return classroomService.findAllWithSubjects();
+    public List<ClassroomDTO> findAllWithLessons(){
+        return classroomService.findAllWithLessons();
     }
 
     @Operation(summary = "Obtiene todos los salones, agregando las reservas programadas del salon.")

@@ -1,4 +1,4 @@
-package com.proj.SegAProj.models;
+package com.proj.SegAProj.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

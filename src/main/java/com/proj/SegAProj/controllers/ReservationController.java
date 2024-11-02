@@ -1,6 +1,7 @@
 package com.proj.SegAProj.controllers;
 
 import com.proj.SegAProj.dto.ReservationDTO;
+import com.proj.SegAProj.dto.ReservationRequest;
 import com.proj.SegAProj.models.Reservation;
 import com.proj.SegAProj.services.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/reservation")
+@RequestMapping("/api/v2/reservation")
 public class ReservationController {
 
     private final ReservationService reservationService;
@@ -42,20 +43,16 @@ public class ReservationController {
         return reservationService.findAllWithUsers();
     }
 
-    @Operation(summary = "Crea una nueva reserva. NOTA IMPORTANTE: " +
-            "El campo classroomReservation debe ser null en la Request, la unión de la reserva con un salon se hace con su metodo especifico. " +
-            "Si se agrega alguna información en el campo sera nula y no se tomara en cuenta en la Request.")
+    @Operation(summary = "Crea una nueva reserva.")
     @PostMapping
-    public Reservation create(@RequestBody Reservation reservation){
-        return reservationService.create(reservation);
+    public Reservation create(@RequestBody ReservationRequest reservationRequest){
+        return reservationService.create(reservationRequest);
     }
 
-    @Operation(summary = "Actualiza una reserva utilizando su ID. NOTA IMPORTANTE: " +
-            "El campo classroomReservation debe ser null en la Request, la unión de la reserva con un salon se hace con su metodo especifico. " +
-            "Si se agrega alguna información en el campo sera nula y no se tomara en cuenta en la Request.")
+    @Operation(summary = "Actualiza una reserva utilizando su ID.")
     @PutMapping(path = "/{id}")
-    public Reservation update (@PathVariable Long id, @RequestBody Reservation reservation){
-        return reservationService.update(id, reservation);
+    public Reservation update (@PathVariable Long id, @RequestBody ReservationRequest reservationRequest){
+        return reservationService.update(id, reservationRequest);
     }
 
     @Operation(summary = "Put encargado de asignar un salon a una reserva utilizando las ID de cada uno. " +

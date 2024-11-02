@@ -1,14 +1,14 @@
 package com.proj.SegAProj.controllers;
 
-import com.proj.SegAProj.dto.AssistRequestDTO;
-import com.proj.SegAProj.models.UserSubjectAssist;
+import com.proj.SegAProj.dto.AssistRequest;
+import com.proj.SegAProj.models.UserLessonAssist;
 import com.proj.SegAProj.services.AssistService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/assist")
+@RequestMapping("/api/v2/assist")
 public class AssistController {
 
     private final AssistService assistService;
@@ -20,10 +20,10 @@ public class AssistController {
 
     @PostMapping
     @Operation(summary = "Se hace registro de asistencia de un estudiante, en una asignatura, con fecha y hora.")
-    public UserSubjectAssist create(@RequestBody AssistRequestDTO assist){
+    public UserLessonAssist create(@RequestBody AssistRequest assist){
         return assistService.createAssist(
                 assist.getUserId(),
-                assist.getSubjectId(),
+                assist.getLessonId(),
                 assist.getEntryDate(),
                 assist.getEntryTime());
     }

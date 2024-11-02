@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/v2/user")
 public class UserController {
 
     private final UserService userService;
@@ -30,10 +30,10 @@ public class UserController {
         return userService.findByUniId(uniId);
     }
 
-    @Operation(summary = "Obtener un usuario utilizando su ID, AGREGANDO todas las asignaturas de este usuario.")
-    @GetMapping(path = "/id/with-subjects/{id}")
-    public UserDTO findByIdWithSubjects (@PathVariable Long id){
-        return userService.findByIdWithSubjects(id);
+    @Operation(summary = "Obtener un usuario utilizando su ID, AGREGANDO todas las lecciones de este usuario.")
+    @GetMapping(path = "/id/with-lessons/{id}")
+    public UserDTO findByIdWithLessons (@PathVariable Long id){
+        return userService.findByIdWithLessons(id);
     }
 
     @Operation(summary = "Obtener un usuario utilizando su ID, AGREGANDO todas las reservas de este usuario.")
@@ -42,10 +42,10 @@ public class UserController {
         return userService.findByIdWithReservations(id);
     }
 
-    @Operation(summary = "Obtener todos los usuarios, AGREGANDO todas las asignaturas de los usuarios.")
-    @GetMapping(path = "/with-subjects")
-    public List<UserDTO> findAllWithSubjects (){
-        return userService.findAllWithSubjects();
+    @Operation(summary = "Obtener todos los usuarios, AGREGANDO todas las lecciones de los usuarios.")
+    @GetMapping(path = "/with-lessons")
+    public List<UserDTO> findAllWithLessons(){
+        return userService.findAllWithLessons();
     }
 
     @Operation(summary = "Obtener todos los usuarios, AGREGANDO todas las reservas de los usuarios.")
@@ -72,11 +72,11 @@ public class UserController {
          return userService.update(id, user);
     }
 
-    @Operation(summary = "Crea la relación entre un usuario y una asignatura en la tabla users_subjects, basado en la relación ManyToMany, utilizando la ID de cada uno.")
-    @PutMapping(path = "/{userId}/subject/{subjectId}")
-    public User enrollUserToSubject(@PathVariable Long userId,
-                                   @PathVariable Long subjectId){
-        return userService.enrollSubjectToUser(userId, subjectId);
+    @Operation(summary = "Crea la relación entre un usuario y una lección en la tabla users_lessons, basado en la relación ManyToMany, utilizando la ID de cada uno.")
+    @PutMapping(path = "/{userId}/lesson/{lessonId}")
+    public User enrollUserToLesson(@PathVariable Long userId,
+                                   @PathVariable Long lessonId){
+        return userService.enrollLessonToUser(userId, lessonId);
     }
 
     @Operation(summary = "Crea la relación entre un usuario y una reserva en la tabla users_reservations, basado en la relación ManyToMany, utilizando la ID de cada uno.")
@@ -86,10 +86,10 @@ public class UserController {
         return userService.enrollReservationToUser(userId, reservationId);
     }
 
-    @Operation(summary = "Elimina la fila que contiene la relación entre un usuario y una asignatura de la tabla users_subjects, utilizando la ID de cada uno.")
-    @DeleteMapping(path = "/delete-user-subject/user/{userId}/subject/{subjectId}")
-    public void deleteEnrollUserToSubject(@PathVariable Long userId, @PathVariable Long subjectId){
-        userService.deleteEnrollSubjectToUser(userId, subjectId);
+    @Operation(summary = "Elimina la fila que contiene la relación entre un usuario y una lección de la tabla users_lessons, utilizando la ID de cada uno.")
+    @DeleteMapping(path = "/delete-user-lesson/user/{userId}/lesson/{lessonId}")
+    public void deleteEnrollUserToLesson(@PathVariable Long userId, @PathVariable Long lessonId){
+        userService.deleteEnrollLessonToUser(userId, lessonId);
     }
 
     @Operation(summary = "Elimina la fila que contiene la relación entre un usuario y una reserva de la tabla users_reservations, utilizando la ID de cada uno.")

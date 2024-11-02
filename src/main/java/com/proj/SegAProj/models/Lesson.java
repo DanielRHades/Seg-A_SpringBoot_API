@@ -1,32 +1,32 @@
 package com.proj.SegAProj.models;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.List;
 
 @Entity
-@Table(name = "reservations")
+@Table(name = "lessons")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Reservation {
+public class Lesson {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @Column(name = "reservation_date", nullable = false)
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Schema(type = "string", example = "yyyy-MM-dd")
-    private LocalDate reservationDate;
+    @Column(name = "day_week", nullable = false)
+    private DayOfWeek dayWeek;
 
     @Column(name = "start_time", nullable = false)
     @JsonFormat(pattern = "HH:mm:ss")
@@ -38,9 +38,21 @@ public class Reservation {
     @Schema(type = "string", example = "HH:mm:ss")
     private LocalTime endTime;
 
-    @ManyToMany(mappedBy = "reservationListUser")
+    @ManyToMany(mappedBy = "lessonListUser")
     @JsonIgnore
-    private List<User> userListReservation;
+    private List<User> userListLesson;
+
+    @OneToMany(mappedBy = "lessonAssist")
+    @JsonIgnore
+    private List<UserLessonAssist> lessonAssistListLesson;
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonInclude
+    @JoinColumn(
+            name = "subject_id",
+            referencedColumnName = "id"
+    )
+    private Subject subjectLesson;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonInclude
@@ -48,10 +60,10 @@ public class Reservation {
             name = "classroom_id",
             referencedColumnName = "id"
     )
-    private Classroom classroomReservation;
+    private Classroom classroomLesson;
 
-    public Reservation(LocalDate reservationDate, LocalTime startTime, LocalTime endTime) {
-        this.reservationDate = reservationDate;
+    public Lesson(DayOfWeek dayWeek, LocalTime startTime, LocalTime endTime) {
+        this.dayWeek = dayWeek;
         this.startTime = startTime;
         this.endTime = endTime;
     }

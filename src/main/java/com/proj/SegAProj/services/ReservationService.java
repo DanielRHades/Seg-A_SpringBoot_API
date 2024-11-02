@@ -1,8 +1,9 @@
 package com.proj.SegAProj.services;
 
 import com.proj.SegAProj.dto.ReservationDTO;
+import com.proj.SegAProj.dto.ReservationRequest;
 import com.proj.SegAProj.dto.UserDTO;
-import com.proj.SegAProj.models.Subject;
+import com.proj.SegAProj.models.Lesson;
 import com.proj.SegAProj.models.Classroom;
 import com.proj.SegAProj.models.Reservation;
 import com.proj.SegAProj.repositories.ClassroomRepository;
@@ -12,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,19 +47,21 @@ public class ReservationService {
     }
 
     @Transactional
-    public Reservation create(Reservation reservation){
-        reservation.setClassroomReservation(null);
+    public Reservation create(ReservationRequest reservationRequest){
+        Reservation reservation = convertToEntity(reservationRequest);
         return reservationRepository.save(reservation);
     }
 
     @Transactional
-    public Reservation update(Long id, Reservation reservation){
-        reservation.setClassroomReservation(null);
+    public Reservation update(Long id, ReservationRequest reservationRequest){
+        Reservation reservation = convertToEntity(reservationRequest);
         var reservationPersisted = findById(id);
         if (!Objects.equals(reservationPersisted.getId(),id)){
             return reservationPersisted;
         }
-        BeanUtils.copyProperties(reservation, reservationPersisted, "id", "classroomReservation");
+        BeanUtils.copyProperties(reservation, reservationPersisted, "id",
+                "userListReservation",
+                "classroomReservation");
         return reservationRepository.save(reservationPersisted);
     }
 
@@ -73,13 +73,14 @@ public class ReservationService {
         Reservation reservation = findById(idReservation);
         Classroom classroom = classroomRepository.findById(idClassroom)
                 .orElseThrow(()->new RuntimeException("No existe esta clase."));
-        List<Subject> subjectList = classroom.getSubjectListClassroom();
-        for (Subject subject : subjectList){
-            boolean interference = reservation.getReservationDate().getDayOfWeek().equals(subject.getDayWeek()) &&
-                    reservation.getStartTime().isBefore(subject.getEndTime()) &&
-                    reservation.getEndTime().isAfter(subject.getStartTime());
+        Iterator<Lesson> lessonIterator = classroom.getLessonListClassroom().iterator();
+        while (lessonIterator.hasNext()){
+            Lesson lessonPointer = lessonIterator.next();
+            boolean interference = reservation.getReservationDate().getDayOfWeek().equals(lessonPointer.getDayWeek()) &&
+                    reservation.getStartTime().isBefore(lessonPointer.getEndTime()) &&
+                    reservation.getEndTime().isAfter(lessonPointer.getStartTime());
             if (interference){
-                throw new RuntimeException("Existe una clase en ese salon, a esa hora.");
+                throw new RuntimeException("Existe una leccion en ese salon, a esa hora.");
             }
         }
         reservation.setClassroomReservation(classroom);
@@ -95,8 +96,10 @@ public class ReservationService {
 
     @Transactional
     public List<ReservationDTO> convertAllReservationsToDTOWithUsers(List<Reservation> reservations){
-        List<ReservationDTO> reservationDTOs = new ArrayList<>();
-        for (Reservation reservation : reservations){
+        List<ReservationDTO> reservationDTOs = new ArrayList<>(reservations.size());
+        Iterator<Reservation> reservationIterator = reservations.iterator();
+        while (reservationIterator.hasNext()){
+            Reservation reservation = reservationIterator.next();
             reservationDTOs.add(convertOneReservationToDTOWithUsers(reservation));
         }
         return reservationDTOs;
@@ -120,6 +123,13 @@ public class ReservationService {
                 reservation.getClassroomReservation(),
                 userDTOs
         );
+    }
+
+    private Reservation convertToEntity(ReservationRequest reservationRequest){
+        return new Reservation(
+                reservationRequest.getReservationDate(),
+                reservationRequest.getStartTime(),
+                reservationRequest.getEndTime());
     }
 }
 

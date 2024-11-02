@@ -14,7 +14,8 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "subjects")
+@Table(name = "subjects", uniqueConstraints = { @UniqueConstraint(name = "nrc_unique_constraint", columnNames = "nrc"),
+        @UniqueConstraint(name = "name_unique_constraint", columnNames = "name")})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,33 +32,8 @@ public class Subject {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "day_week", nullable = false)
-    private DayOfWeek dayWeek;
-
-    @Column(name = "start_time", nullable = false)
-    @JsonFormat(pattern = "HH:mm:ss")
-    @Schema(type = "string", example = "HH:mm:ss")
-    private LocalTime startTime;
-
-    @Column(name = "end_time", nullable = false)
-    @JsonFormat(pattern = "HH:mm:ss")
-    @Schema(type = "string", example = "HH:mm:ss")
-    private LocalTime endTime;
-
-    @ManyToMany(mappedBy = "subjectListUser")
+    @OneToMany(mappedBy = "subjectLesson")
     @JsonIgnore
-    private List<User> userListSubject;
-
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonInclude
-    @JoinColumn(
-            name = "classroom_id",
-            referencedColumnName = "id"
-    )
-    private Classroom classroomSubject;
-
-    @OneToMany(mappedBy = "subjectAssist")
-    @JsonIgnore
-    private List<UserSubjectAssist> subjectAssistListSubject;
+    private List<Lesson> lessonListSubject;
 
 }

@@ -1,11 +1,14 @@
 package com.proj.SegAProj.services;
 
+import com.proj.SegAProj.dto.LessonDTO;
 import com.proj.SegAProj.dto.SubjectDTO;
 import com.proj.SegAProj.dto.ReservationDTO;
 import com.proj.SegAProj.dto.UserDTO;
+import com.proj.SegAProj.models.Lesson;
 import com.proj.SegAProj.models.Subject;
 import com.proj.SegAProj.models.Reservation;
 import com.proj.SegAProj.models.User;
+import com.proj.SegAProj.repositories.LessonRepository;
 import com.proj.SegAProj.repositories.SubjectRepository;
 import com.proj.SegAProj.repositories.ReservationRepository;
 import com.proj.SegAProj.repositories.UserRepository;
@@ -15,27 +18,24 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
-    private final SubjectRepository subjectRepository;
+    private final LessonRepository lessonRepository;
     private final ReservationRepository reservationRepository;
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     @Autowired
     public UserService (UserRepository userRepository,
-                        SubjectRepository subjectRepository,
+                        LessonRepository lessonRepository,
                         ReservationRepository reservationRepository){
         this.userRepository = userRepository;
-        this.subjectRepository = subjectRepository;
+        this.lessonRepository = lessonRepository;
         this.reservationRepository = reservationRepository;
     }
 
@@ -53,8 +53,8 @@ public class UserService {
                 .orElseThrow(()->new RuntimeException("No existe el usuario.")));
     }
 
-    public UserDTO findByIdWithSubjects(Long userId) {
-        return convertOneUserToDTOWithSubjects(userRepository.findById(userId)
+    public UserDTO findByIdWithLessons(Long userId) {
+        return convertOneUserToDTOWithLessons(userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("No existe el usuario")));
     }
 
@@ -63,8 +63,8 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("No existe el usuario")));
     }
 
-    public List<UserDTO> findAllWithSubjects() {
-        return convertAllUserToDTOWithSubjects(userRepository.findAll());
+    public List<UserDTO> findAllWithLessons() {
+        return convertAllUserToDTOWithLessons(userRepository.findAll());
     }
 
     public List<UserDTO> findAllWithReservations() {
@@ -94,19 +94,19 @@ public class UserService {
     }
 
     @Transactional
-    public User enrollSubjectToUser(Long userId, Long subjectId){
+    public User enrollLessonToUser(Long userId, Long lessonId){
         User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("No existe el usuario"));
-        Subject subject = subjectRepository.findById(subjectId).orElseThrow(()->new RuntimeException("No existe la asignatura."));
-        user.getSubjectListUser().add(subject);
+        Lesson lesson = lessonRepository.findById(lessonId).orElseThrow(()->new RuntimeException("No existe la lección."));
+        user.getLessonListUser().add(lesson);
         return userRepository.save(user);
     }
 
     @Transactional
-    public void deleteEnrollSubjectToUser(Long userId, Long subjectId){
+    public void deleteEnrollLessonToUser(Long userId, Long lessonId){
         User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("No existe el usuario."));
-        Subject subject = subjectRepository.findById(subjectId).orElseThrow(()->new RuntimeException("No existe la asignatura."));
-        user.getSubjectListUser().remove(subject);
-        userRepository.deleteRowFromUserSubjectTable(user.getId(), subject.getId());
+        Lesson lesson = lessonRepository.findById(lessonId).orElseThrow(()->new RuntimeException("No existe la lección."));
+        user.getLessonListUser().remove(lesson);
+        userRepository.deleteRowFromUserLessonTable(user.getId(), lesson.getId());
     }
 
     @Transactional
@@ -125,6 +125,39 @@ public class UserService {
     }
 
     @Transactional
+    public List<UserDTO> convertAllUsersToDTO(List<User> userList){
+        List<UserDTO> userDTOList = new ArrayList<>(userList.size());
+        Iterator<User> userIterator = userList.iterator();
+        while (userIterator.hasNext()){
+            User user = userIterator.next();
+            userDTOList.add(convertOneUserToDTO(user));
+        }
+        return userDTOList;
+    }
+
+    @Transactional
+    public List<UserDTO> convertAllUserToDTOWithLessons(List<User> userList){
+        List<UserDTO> userDTOList = new ArrayList<>(userList.size());
+        Iterator<User> userIterator = userList.iterator();
+        while (userIterator.hasNext()){
+            User user = userIterator.next();
+            userDTOList.add(convertOneUserToDTOWithLessons(user));
+        }
+        return userDTOList;
+    }
+
+    @Transactional
+    public List<UserDTO> convertAllUserToDTOWithReservations(List<User> userList){
+        List<UserDTO> userDTOList = new ArrayList<>(userList.size());
+        Iterator<User> userIterator = userList.iterator();
+        while (userIterator.hasNext()){
+            User user = userIterator.next();
+            userDTOList.add(convertOneUserToDTOWithReservations(user));
+        }
+        return userDTOList;
+    }
+
+    @Transactional
     public UserDTO convertOneUserToDTO(User user){
         return new UserDTO(
                 user.getId(),
@@ -134,46 +167,17 @@ public class UserService {
                 user.getLastName(),
                 user.getEmail()
         );
-
     }
 
     @Transactional
-    public List<UserDTO> convertAllUsersToDTO(List<User> userList){
-        List<UserDTO> userDTOList = new ArrayList<>();
-        for (User user : userList){
-            userDTOList.add(convertOneUserToDTO(user));
-        }
-        return userDTOList;
-    }
-
-    @Transactional
-    public List<UserDTO> convertAllUserToDTOWithSubjects(List<User> users){
-        List<UserDTO> userList = new ArrayList<>();
-        for (User user : users){
-             userList.add(convertOneUserToDTOWithSubjects(user));
-        }
-        return userList;
-    }
-
-    @Transactional
-    public List<UserDTO> convertAllUserToDTOWithReservations(List<User> users){
-        List<UserDTO> userList = new ArrayList<>();
-        for (User user : users){
-            userList.add(convertOneUserToDTOWithReservations(user));
-        }
-        return userList;
-    }
-
-    @Transactional
-    public UserDTO convertOneUserToDTOWithSubjects(User user) {
-        Set<SubjectDTO> subjectDTOS = user.getSubjectListUser().stream()
-                .map(subject -> new SubjectDTO(subject.getId(),
-                        subject.getNrc(),
-                        subject.getName(),
-                        subject.getDayWeek(),
-                        subject.getStartTime(),
-                        subject.getEndTime(),
-                        subject.getClassroomSubject()))
+    public UserDTO convertOneUserToDTOWithLessons(User user) {
+        Set<LessonDTO> lessonDTOs = user.getLessonListUser().stream()
+                .map(lesson -> new LessonDTO(lesson.getId(),
+                        lesson.getDayWeek(),
+                        lesson.getStartTime(),
+                        lesson.getEndTime(),
+                        lesson.getSubjectLesson(),
+                        lesson.getClassroomLesson()))
                 .collect(Collectors.toSet());
 
         return new UserDTO(
@@ -183,7 +187,7 @@ public class UserService {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
-                subjectDTOS,
+                lessonDTOs,
                 null
         );
     }
@@ -209,4 +213,5 @@ public class UserService {
                 reservationDTOs
         );
     }
+
 }

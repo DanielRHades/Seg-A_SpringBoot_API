@@ -15,10 +15,10 @@ import java.time.LocalTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserSubjectAssist {
+public class UserLessonAssist {
 
     @EmbeddedId
-    private UserSubjectAssistKey id;
+    private UserLessonAssistKey id;
 
     @ManyToOne
     @MapsId("userId")
@@ -29,12 +29,12 @@ public class UserSubjectAssist {
     private User userAssist;
 
     @ManyToOne
-    @MapsId("subjectId")
+    @MapsId("lessonId")
     @JsonIgnore
     @JoinColumn(
-            name = "subject_id",
+            name = "lesson_id",
             referencedColumnName = "id")
-    private Subject subjectAssist;
+    private Lesson lessonAssist;
 
     @Column(name = "entry_time", nullable = false)
     @JsonFormat(pattern = "HH:mm:ss")

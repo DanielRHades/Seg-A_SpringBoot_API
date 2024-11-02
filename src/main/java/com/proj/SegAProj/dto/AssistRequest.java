@@ -9,9 +9,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Data
-public class AssistRequestDTO implements Serializable {
+public class AssistRequest implements Serializable {
+
     private Long userId;
-    private Long subjectId;
+    private Long lessonId;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Schema(type = "string", example = "yyyy-MM-dd")
@@ -20,4 +21,5 @@ public class AssistRequestDTO implements Serializable {
     @JsonFormat(pattern = "HH:mm:ss")
     @Schema(type = "string", example = "HH:mm:ss")
     private LocalTime entryTime;
+
 }

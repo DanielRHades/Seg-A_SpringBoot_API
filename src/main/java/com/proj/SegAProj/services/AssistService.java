@@ -1,10 +1,8 @@
 package com.proj.SegAProj.services;
 
-import com.proj.SegAProj.models.Subject;
-import com.proj.SegAProj.models.User;
-import com.proj.SegAProj.models.UserSubjectAssist;
-import com.proj.SegAProj.models.UserSubjectAssistKey;
+import com.proj.SegAProj.models.*;
 import com.proj.SegAProj.repositories.AssistRepository;
+import com.proj.SegAProj.repositories.LessonRepository;
 import com.proj.SegAProj.repositories.SubjectRepository;
 import com.proj.SegAProj.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,34 +16,34 @@ import java.time.LocalTime;
 public class AssistService {
 
     private final UserRepository userRepository;
-    private final SubjectRepository subjectRepository;
+    private final LessonRepository lessonRepository;
     private final AssistRepository assistRepository;
 
     @Autowired
-    public  AssistService (UserRepository userRepository, SubjectRepository subjectRepository, AssistRepository assistRepository){
+    public  AssistService (UserRepository userRepository, LessonRepository lessonRepository, AssistRepository assistRepository){
         this.userRepository = userRepository;
-        this.subjectRepository = subjectRepository;
+        this.lessonRepository = lessonRepository;
         this.assistRepository = assistRepository;
     }
 
     @Transactional
-    public UserSubjectAssist createAssist(Long userId, Long subjectId, LocalDate entryDate, LocalTime entryTime){
+    public UserLessonAssist createAssist(Long userId, Long lessonId, LocalDate entryDate, LocalTime entryTime){
         User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("No existe el usuario"));
-        Subject subject = subjectRepository.findById(subjectId).orElseThrow(()-> new RuntimeException("No existe la asignatura."));
+        Lesson lesson = lessonRepository.findById(lessonId).orElseThrow(()-> new RuntimeException("No existe la asignatura."));
 
-        UserSubjectAssistKey assistKey = new UserSubjectAssistKey();
+        UserLessonAssistKey assistKey = new UserLessonAssistKey();
         assistKey.setUserId(userId);
-        assistKey.setSubjectId(subjectId);
+        assistKey.setLessonId(lessonId);
         assistKey.setEntryDate(entryDate);
 
-        UserSubjectAssist assist = new UserSubjectAssist();
+        UserLessonAssist assist = new UserLessonAssist();
         assist.setId(assistKey);
         assist.setUserAssist(user);
-        assist.setSubjectAssist(subject);
+        assist.setLessonAssist(lesson);
         assist.setEntryTime(entryTime);
 
-        user.getSubjectAssistListUser().add(assist);
-        subject.getSubjectAssistListSubject().add(assist);
+        user.getLessonAssistListUser().add(assist);
+        lesson.getLessonAssistListLesson().add(assist);
         return assistRepository.save(assist);
     }
 

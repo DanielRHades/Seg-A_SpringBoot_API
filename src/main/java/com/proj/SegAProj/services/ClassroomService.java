@@ -1,5 +1,6 @@
 package com.proj.SegAProj.services;
 
+import com.proj.SegAProj.dto.LessonDTO;
 import com.proj.SegAProj.dto.SubjectDTO;
 import com.proj.SegAProj.dto.ClassroomDTO;
 import com.proj.SegAProj.dto.ReservationDTO;
@@ -10,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,8 +29,8 @@ public class ClassroomService {
                 .orElseThrow(()->new RuntimeException("No existe este salon."));
     }
 
-    public ClassroomDTO findByIdWithSubjects(Long id){
-        return convertOneClassroomToDTOWithSubjects(findById(id));
+    public ClassroomDTO findByIdWithLessons(Long id){
+        return convertOneClassroomToDTOWithLessons(findById(id));
     }
 
     public ClassroomDTO findByIdWithReservations(Long id){
@@ -42,8 +40,8 @@ public class ClassroomService {
         return classroomRepository.findAll();
     }
 
-    public List<ClassroomDTO> findAllWithSubjects(){
-        return convertAllClassroomToDTOWithSubjects(findAll());
+    public List<ClassroomDTO> findAllWithLessons(){
+        return convertAllClassroomToDTOWithLessons(findAll());
     }
 
     public List<ClassroomDTO> findAllWithReservations(){
@@ -70,21 +68,21 @@ public class ClassroomService {
         classroomRepository.deleteById(id);
     }
 
-    public ClassroomDTO convertOneClassroomToDTOWithSubjects(Classroom classroom){
-        Set<SubjectDTO> subjectDTOS = classroom.getSubjectListClassroom().stream()
-                .map(subject -> new SubjectDTO(subject.getId(),
-                        subject.getNrc(),
-                        subject.getName(),
-                        subject.getDayWeek(),
-                        subject.getStartTime(),
-                        subject.getEndTime()))
+    public ClassroomDTO convertOneClassroomToDTOWithLessons(Classroom classroom){
+        Set<LessonDTO> lessonDTOs = classroom.getLessonListClassroom().stream()
+                .map(lesson -> new LessonDTO(lesson.getId(),
+                        lesson.getDayWeek(),
+                        lesson.getStartTime(),
+                        lesson.getEndTime(),
+                        lesson.getSubjectLesson(),
+                        null))
                 .collect(Collectors.toSet());
 
         return new ClassroomDTO(
                 classroom.getId(),
                 classroom.getName(),
                 classroom.getCapacity(),
-                subjectDTOS,
+                lessonDTOs,
                 null
         );
     }
@@ -106,17 +104,21 @@ public class ClassroomService {
         );
     }
 
-    public List<ClassroomDTO> convertAllClassroomToDTOWithSubjects(List<Classroom> classroomList){
-        List<ClassroomDTO> classroomDTOList = new ArrayList<>();
-        for (Classroom classroom : classroomList){
-            classroomDTOList.add(convertOneClassroomToDTOWithSubjects(classroom));
+    public List<ClassroomDTO> convertAllClassroomToDTOWithLessons(List<Classroom> classroomList){
+        List<ClassroomDTO> classroomDTOList = new ArrayList<>(classroomList.size());
+        Iterator<Classroom> classroomIterator = classroomList.iterator();
+        while (classroomIterator.hasNext()){
+            Classroom classroom = classroomIterator.next();
+            classroomDTOList.add(convertOneClassroomToDTOWithLessons(classroom));
         }
         return classroomDTOList;
     }
 
     public List<ClassroomDTO> convertAllClassroomToDTOWithReservations(List<Classroom> classroomList){
-        List<ClassroomDTO> classroomDTOList = new ArrayList<>();
-        for (Classroom classroom : classroomList){
+        List<ClassroomDTO> classroomDTOList = new ArrayList<>(classroomList.size());
+        Iterator<Classroom> classroomIterator = classroomList.iterator();
+        while (classroomIterator.hasNext()){
+            Classroom classroom = classroomIterator.next();
             classroomDTOList.add(convertOneClassroomToDTOWithReservations(classroom));
         }
         return classroomDTOList;

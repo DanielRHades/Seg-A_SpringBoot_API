@@ -14,18 +14,18 @@ public class UserDTO implements Serializable {
     private String firstName;
     private String lastName;
     private String email;
-    private Set<SubjectDTO> subjectSetHash;
+    private Set<LessonDTO> lessonSetHas;
     private Set<ReservationDTO> reservationSetHash;
 
     public UserDTO(Long id, String uniId, Role role, String firstName, String lastName, String email,
-                   Set<SubjectDTO> subjectSetHash, Set<ReservationDTO> reservationSetHash) {
+                   Set<LessonDTO> lessonSetHas, Set<ReservationDTO> reservationSetHash) {
         this.id = id;
         this.uniId = uniId;
         this.role = role;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.subjectSetHash = subjectSetHash;
+        this.lessonSetHas = lessonSetHas;
         this.reservationSetHash = reservationSetHash;
     }
 

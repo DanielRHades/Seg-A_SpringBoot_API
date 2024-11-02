@@ -1,7 +1,7 @@
 package com.proj.SegAProj.services;
 
-import com.proj.SegAProj.models.AuthenticationRequest;
-import com.proj.SegAProj.models.AuthenticationResponse;
+import com.proj.SegAProj.dto.AuthenticationRequest;
+import com.proj.SegAProj.dto.AuthenticationResponse;
 import com.proj.SegAProj.repositories.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

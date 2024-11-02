@@ -13,13 +13,13 @@ import java.time.LocalDate;
 @Embeddable
 @EqualsAndHashCode
 @Data
-public class UserSubjectAssistKey implements Serializable {
+public class UserLessonAssistKey implements Serializable {
 
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "subject_id")
-    private Long subjectId;
+    @Column(name = "lesson_id")
+    private Long lessonId;
 
     @Column(name = "entry_date")
     @JsonFormat(pattern = "yyyy-MM-dd")

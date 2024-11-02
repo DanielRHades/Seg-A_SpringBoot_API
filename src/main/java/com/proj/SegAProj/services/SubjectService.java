@@ -1,67 +1,56 @@
 package com.proj.SegAProj.services;
 
+import com.proj.SegAProj.dto.LessonDTO;
 import com.proj.SegAProj.dto.SubjectDTO;
-import com.proj.SegAProj.dto.UserDTO;
 import com.proj.SegAProj.models.Subject;
-import com.proj.SegAProj.models.Classroom;
 import com.proj.SegAProj.repositories.SubjectRepository;
-import com.proj.SegAProj.repositories.ClassroomRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class SubjectService {
 
     private final SubjectRepository subjectRepository;
-    private final ClassroomRepository classroomRepository;
 
     @Autowired
-    public SubjectService(SubjectRepository subjectRepository,
-                          ClassroomRepository classroomRepository){
+    public SubjectService(SubjectRepository subjectRepository){
         this.subjectRepository = subjectRepository;
-        this.classroomRepository = classroomRepository;
     }
 
     public Subject findById(Long id){
-        return subjectRepository.findById(id).orElseThrow();
+        return subjectRepository.findById(id)
+                .orElseThrow(()->new RuntimeException("No existe esta asignatura."));
     }
 
-    public SubjectDTO findByIdWithUsers(Long id){
-        return convertOneSubjectToDTOWithUsers(subjectRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("No existe esta asignatura.")));
-    }
-
-    public List<SubjectDTO> findAllWithUsers(){
-        return convertAllSubjectsToDTOWithUsers(findAll());
-
+    public SubjectDTO findByIdWithLessons(Long id){
+        return convertOneSubjectToDTOWithLessons(findById(id));
     }
 
     public List<Subject> findAll(){
         return subjectRepository.findAll();
     }
 
+    public List<SubjectDTO> findAllWithLessons(){
+        return convertAllSubjectsToDTOWithLessons(findAll());
+    }
+
     @Transactional
-    public Subject create (Subject subjectEntity){
-        subjectEntity.setClassroomSubject(null);
-        return subjectRepository.save(subjectEntity);
+    public Subject create (Subject subject){
+        return subjectRepository.save(subject);
     }
 
     @Transactional
     public Subject update (Long id, Subject subject){
-        subject.setClassroomSubject(null);
         var subjectPersisted = findById(id);
         if (!Objects.equals(subjectPersisted.getId(),id)){
             return subjectPersisted;
         }
-        BeanUtils.copyProperties(subject, subjectPersisted, "id", "classroomSubject");
+        BeanUtils.copyProperties(subject, subjectPersisted, "id");
         return subjectRepository.save(subjectPersisted);
     }
 
@@ -70,56 +59,30 @@ public class SubjectService {
         subjectRepository.deleteById(id);
     }
 
-    @Transactional
-    public Subject assignClassroomToSubject(Long subjectId, Long classroomId){
-        Subject subject = findById(subjectId);
-        Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(()->new RuntimeException("No existe la asignatura"));
-        List<Subject> subjectList = classroom.getSubjectListClassroom();
-        for (Subject sub : subjectList){
-            boolean interference = subject.getDayWeek().equals(sub.getDayWeek()) &&
-                    subject.getStartTime().isBefore(sub.getEndTime()) &&
-                    subject.getEndTime().isAfter(sub.getStartTime());
-            if (interference){
-                throw new RuntimeException("Existe una asignatura en ese salon, a esa hora.");
-            }
-        }
-        subject.setClassroomSubject(classroom);
-        return subjectRepository.save(subject);
-    }
-
-    @Transactional
-    public Subject unassignClassroomToSubject(Long id){
-        Subject subject = subjectRepository.findById(id).orElseThrow(()->new RuntimeException("No existe la asignatura."));
-        subject.setClassroomSubject(null);
-        return subjectRepository.save(subject);
-    }
-
-    public List<SubjectDTO> convertAllSubjectsToDTOWithUsers(List<Subject> subjectList){
-        List<SubjectDTO> subjectDTOS = new ArrayList<>();
-        for (Subject subject : subjectList){
-            subjectDTOS.add(convertOneSubjectToDTOWithUsers(subject));
+    public List<SubjectDTO> convertAllSubjectsToDTOWithLessons(List<Subject> subjectList){
+        List<SubjectDTO> subjectDTOS = new ArrayList<>(subjectList.size());
+        Iterator<Subject> iterator = subjectList.iterator();
+        while (iterator.hasNext()){
+            Subject subject = iterator.next();
+            subjectDTOS.add(convertOneSubjectToDTOWithLessons(subject));
         }
         return subjectDTOS;
     }
 
-    public SubjectDTO convertOneSubjectToDTOWithUsers(Subject subject){
-        Set<UserDTO> userDTOS = subject.getUserListSubject().stream().map(
-                user -> new UserDTO(user.getId(),
-                        user.getUniId(),
-                        user.getRole(),
-                        user.getFirstName(),
-                        user.getLastName(),
-                        user.getEmail()))
+    public SubjectDTO convertOneSubjectToDTOWithLessons(Subject subject){
+        Set<LessonDTO> lessonDTOs = subject.getLessonListSubject().stream().map(
+                lesson -> new LessonDTO(lesson.getId(),
+                        lesson.getDayWeek(),
+                        lesson.getStartTime(),
+                        lesson.getEndTime(),
+                        null,
+                        lesson.getClassroomLesson()))
                 .collect(Collectors.toSet());
 
         return new SubjectDTO(subject.getId(),
                 subject.getNrc(),
                 subject.getName(),
-                subject.getDayWeek(),
-                subject.getStartTime(),
-                subject.getEndTime(),
-                subject.getClassroomSubject(),
-                userDTOS);
+                lessonDTOs);
 
     }
 

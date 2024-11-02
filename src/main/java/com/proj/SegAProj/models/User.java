@@ -56,11 +56,11 @@ public class User implements UserDetails {
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     @JoinTable(
-            name = "users_subjects",
+            name = "users_lessons",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "subject_id")
+            inverseJoinColumns = @JoinColumn(name = "lesson_id")
     )
-    private List<Subject> subjectListUser;
+    private List<Lesson> lessonListUser;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
@@ -73,7 +73,7 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "userAssist")
     @JsonIgnore
-    private List<UserSubjectAssist> subjectAssistListUser;
+    private List<UserLessonAssist> lessonAssistListUser;
 
     @Override
     @JsonIgnore

@@ -17,8 +17,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Transactional
     @Modifying
-    @Query(value = "DELETE FROM users_subjects WHERE user_id = :userId AND subject_id = :subjectId", nativeQuery = true)
-    void deleteRowFromUserSubjectTable(@Param("userId") Long userId, @Param("subjectId") Long subjectId);
+    @Query(value = "DELETE FROM users_lessons WHERE user_id = :userId AND lesson_id = :lessonId", nativeQuery = true)
+    void deleteRowFromUserLessonTable(@Param("userId") Long userId, @Param("lessonId") Long lessonId);
 
     @Transactional
     @Modifying

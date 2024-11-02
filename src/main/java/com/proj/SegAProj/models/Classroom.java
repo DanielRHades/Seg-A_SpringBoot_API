@@ -31,7 +31,7 @@ public class Classroom {
     @JsonIgnore
     private List<Reservation> reservationListClassroom;
 
-    @OneToMany(mappedBy = "classroomSubject")
+    @OneToMany(mappedBy = "classroomLesson")
     @JsonIgnore
-    private List<Subject> subjectListClassroom;
+    private List<Lesson> lessonListClassroom;
 }

@@ -1,8 +1,8 @@
 package com.proj.SegAProj.controllers;
 
 
-import com.proj.SegAProj.models.AuthenticationRequest;
-import com.proj.SegAProj.models.AuthenticationResponse;
+import com.proj.SegAProj.dto.AuthenticationRequest;
+import com.proj.SegAProj.dto.AuthenticationResponse;
 import com.proj.SegAProj.services.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/v2/auth")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
