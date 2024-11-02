@@ -2,20 +2,16 @@ package com.proj.SegAProj.models;
 
 
 import com.fasterxml.jackson.annotation.*;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.DayOfWeek;
-import java.time.LocalTime;
 import java.util.List;
 
 
 @Entity
-@Table(name = "subjects", uniqueConstraints = { @UniqueConstraint(name = "nrc_unique_constraint", columnNames = "nrc"),
-        @UniqueConstraint(name = "name_unique_constraint", columnNames = "name")})
+@Table(name = "subjects", uniqueConstraints = {@UniqueConstraint(name = "nrc_unique_constraint", columnNames = "nrc")})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
