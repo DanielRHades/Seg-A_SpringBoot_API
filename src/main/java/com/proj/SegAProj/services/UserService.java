@@ -28,7 +28,7 @@ public class UserService {
     private final LessonRepository lessonRepository;
     private final ReservationRepository reservationRepository;
 
-    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     @Autowired
     public UserService (UserRepository userRepository,
@@ -95,69 +95,61 @@ public class UserService {
 
     @Transactional
     public User enrollLessonToUser(Long userId, Long lessonId){
-        User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("No existe el usuario"));
-        Lesson lesson = lessonRepository.findById(lessonId).orElseThrow(()->new RuntimeException("No existe la lección."));
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new RuntimeException("No existe el usuario"));
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(()->new RuntimeException("No existe la lección."));
         user.getLessonListUser().add(lesson);
         return userRepository.save(user);
     }
 
     @Transactional
     public void deleteEnrollLessonToUser(Long userId, Long lessonId){
-        User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("No existe el usuario."));
-        Lesson lesson = lessonRepository.findById(lessonId).orElseThrow(()->new RuntimeException("No existe la lección."));
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new RuntimeException("No existe el usuario."));
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(()->new RuntimeException("No existe la lección."));
         user.getLessonListUser().remove(lesson);
         userRepository.deleteRowFromUserLessonTable(user.getId(), lesson.getId());
     }
 
     @Transactional
     public User enrollReservationToUser(Long userId, Long reservationId){
-        User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("No existe el usuario"));
-        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(()-> new RuntimeException("No existe la reserva"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new RuntimeException("No existe el usuario."));
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(()-> new RuntimeException("No existe la reserva."));
         user.getReservationListUser().add(reservation);
         return userRepository.save(user);
     }
 
     @Transactional
     public void deleteEnrollReservationToUser(Long idUser, Long idReservation){
-        User user = userRepository.findById(idUser).orElseThrow(()->new RuntimeException("No existe el usuario."));
-        Reservation reservation = reservationRepository.findById(idReservation).orElseThrow(()-> new RuntimeException("No existe la reserva."));
+        User user = userRepository.findById(idUser)
+                .orElseThrow(()->new RuntimeException("No existe el usuario."));
+        Reservation reservation = reservationRepository.findById(idReservation)
+                .orElseThrow(()-> new RuntimeException("No existe la reserva."));
         userRepository.deleteRowFromUserReservationTable(user.getId(), reservation.getId());
     }
 
-    @Transactional
     public List<UserDTO> convertAllUsersToDTO(List<User> userList){
         List<UserDTO> userDTOList = new ArrayList<>(userList.size());
-        Iterator<User> userIterator = userList.iterator();
-        while (userIterator.hasNext()){
-            User user = userIterator.next();
-            userDTOList.add(convertOneUserToDTO(user));
-        }
+        userList.forEach(user -> userDTOList.add(convertOneUserToDTO(user)));
         return userDTOList;
     }
 
-    @Transactional
     public List<UserDTO> convertAllUserToDTOWithLessons(List<User> userList){
         List<UserDTO> userDTOList = new ArrayList<>(userList.size());
-        Iterator<User> userIterator = userList.iterator();
-        while (userIterator.hasNext()){
-            User user = userIterator.next();
-            userDTOList.add(convertOneUserToDTOWithLessons(user));
-        }
+        userList.forEach(user -> userDTOList.add(convertOneUserToDTOWithLessons(user)));
         return userDTOList;
     }
 
-    @Transactional
     public List<UserDTO> convertAllUserToDTOWithReservations(List<User> userList){
         List<UserDTO> userDTOList = new ArrayList<>(userList.size());
-        Iterator<User> userIterator = userList.iterator();
-        while (userIterator.hasNext()){
-            User user = userIterator.next();
-            userDTOList.add(convertOneUserToDTOWithReservations(user));
-        }
+        userList.forEach(user -> userDTOList.add(convertOneUserToDTOWithReservations(user)));
         return userDTOList;
     }
 
-    @Transactional
     public UserDTO convertOneUserToDTO(User user){
         return new UserDTO(
                 user.getId(),
@@ -169,7 +161,6 @@ public class UserService {
         );
     }
 
-    @Transactional
     public UserDTO convertOneUserToDTOWithLessons(User user) {
         Set<LessonDTO> lessonDTOs = user.getLessonListUser().stream()
                 .map(lesson -> new LessonDTO(lesson.getId(),
@@ -192,7 +183,6 @@ public class UserService {
         );
     }
 
-    @Transactional
     public UserDTO convertOneUserToDTOWithReservations(User user){
         Set<ReservationDTO> reservationDTOs = user.getReservationListUser().stream()
                 .map(reservation -> new ReservationDTO(reservation.getId(),

@@ -60,13 +60,9 @@ public class SubjectService {
     }
 
     public List<SubjectDTO> convertAllSubjectsToDTOWithLessons(List<Subject> subjectList){
-        List<SubjectDTO> subjectDTOS = new ArrayList<>(subjectList.size());
-        Iterator<Subject> iterator = subjectList.iterator();
-        while (iterator.hasNext()){
-            Subject subject = iterator.next();
-            subjectDTOS.add(convertOneSubjectToDTOWithLessons(subject));
-        }
-        return subjectDTOS;
+        List<SubjectDTO> subjectDTOList = new ArrayList<>(subjectList.size());
+        subjectList.forEach(subject -> subjectDTOList.add(convertOneSubjectToDTOWithLessons(subject)));
+        return subjectDTOList;
     }
 
     public SubjectDTO convertOneSubjectToDTOWithLessons(Subject subject){

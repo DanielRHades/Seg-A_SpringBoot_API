@@ -15,12 +15,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByUniId(String uniId);
 
-    @Transactional
     @Modifying
     @Query(value = "DELETE FROM users_lessons WHERE user_id = :userId AND lesson_id = :lessonId", nativeQuery = true)
     void deleteRowFromUserLessonTable(@Param("userId") Long userId, @Param("lessonId") Long lessonId);
 
-    @Transactional
     @Modifying
     @Query(value = "DELETE FROM users_reservations WHERE user_id = :userId AND reservation_id = :reservationId", nativeQuery = true)
     void deleteRowFromUserReservationTable(@Param("userId") Long userId, @Param("reservationId") Long reservationId);

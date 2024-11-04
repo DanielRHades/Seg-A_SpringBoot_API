@@ -79,7 +79,8 @@ public class LessonService {
     @Transactional
     public Lesson assignSubjectToLesson(Long subjectId, Long classroomId){
         Lesson lesson = findById(subjectId);
-        Subject subject = subjectRepository.findById(classroomId).orElseThrow(()->new RuntimeException("No existe la asignatura"));
+        Subject subject = subjectRepository.findById(classroomId)
+                .orElseThrow(()->new RuntimeException("No existe la asignatura."));
         lesson.setSubjectLesson(subject);
         return lessonRepository.save(lesson);
     }
@@ -95,15 +96,10 @@ public class LessonService {
     public Lesson assignClassroomToLesson(Long lessonId, Long classroomId){
         Lesson lesson = findById(lessonId);
         Classroom classroom = classroomRepository.findById(classroomId)
-                .orElseThrow(()->new RuntimeException("No existe la asignatura"));
-        Iterator<Lesson> lessonIterator = classroom.getLessonListClassroom().iterator();
-        while (lessonIterator.hasNext()){
-            Lesson lessonPointer = lessonIterator.next();
-            boolean interference = lesson.getDayWeek().equals(lessonPointer.getDayWeek()) &&
-                    lesson.getStartTime().isBefore(lessonPointer.getEndTime()) &&
-                    lesson.getEndTime().isAfter(lessonPointer.getStartTime());
-            if (interference){
-                throw new RuntimeException("Existe una asignatura en ese salon, a esa hora.");
+                .orElseThrow(()->new RuntimeException("No existe el salón."));
+        for (Lesson lessonPointer : classroom.getLessonListClassroom()){
+            if (existsInterference(lesson, lessonPointer)){
+                throw new RuntimeException("Existe una lección en ese salon, a esa hora.");
             }
         }
         lesson.setClassroomLesson(classroom);
@@ -112,19 +108,15 @@ public class LessonService {
 
     @Transactional
     public Lesson unassignClassroomToLesson(Long id){
-        Lesson lesson = lessonRepository.findById(id).orElseThrow(()->new RuntimeException("No existe la asignatura."));
+        Lesson lesson = findById(id);
         lesson.setClassroomLesson(null);
         return lessonRepository.save(lesson);
     }
 
     public List<LessonDTO> convertAllLessonsToDTOWithUsers(List<Lesson> lessonList){
-        List<LessonDTO> lessonDTOs = new ArrayList<>(lessonList.size());
-        Iterator<Lesson> lessonIterator = lessonList.iterator();
-        while (lessonIterator.hasNext()){
-            Lesson lesson = lessonIterator.next();
-            lessonDTOs.add(convertOneLessonToDTOWithUsers(lesson));
-        }
-        return lessonDTOs;
+        List<LessonDTO> lessonDTOList = new ArrayList<>(lessonList.size());
+        lessonList.forEach(lesson -> lessonDTOList.add(convertOneLessonToDTOWithUsers(lesson)));
+        return lessonDTOList;
     }
 
     public LessonDTO convertOneLessonToDTOWithUsers(Lesson lesson){
@@ -152,5 +144,11 @@ public class LessonService {
                 lessonRequest.getStartTime(),
                 lessonRequest.getEndTime()
         );
+    }
+
+    public boolean existsInterference(Lesson lesson, Lesson lessonPointer){
+        return lesson.getDayWeek().equals(lessonPointer.getDayWeek()) &&
+                lesson.getStartTime().isBefore(lessonPointer.getEndTime()) &&
+                lesson.getEndTime().isAfter(lessonPointer.getStartTime());
     }
 }

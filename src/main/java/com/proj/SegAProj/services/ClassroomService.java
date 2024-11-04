@@ -26,7 +26,7 @@ public class ClassroomService {
 
     public Classroom findById(Long id){
         return classroomRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("No existe este salon."));
+                .orElseThrow(()->new RuntimeException("No existe este salón."));
     }
 
     public ClassroomDTO findByIdWithLessons(Long id){
@@ -68,6 +68,18 @@ public class ClassroomService {
         classroomRepository.deleteById(id);
     }
 
+    public List<ClassroomDTO> convertAllClassroomToDTOWithLessons(List<Classroom> classroomList){
+        List<ClassroomDTO> classroomDTOList = new ArrayList<>(classroomList.size());
+        classroomList.forEach(classroom -> classroomDTOList.add(convertOneClassroomToDTOWithLessons(classroom)));
+        return classroomDTOList;
+    }
+
+    public List<ClassroomDTO> convertAllClassroomToDTOWithReservations(List<Classroom> classroomList){
+        List<ClassroomDTO> classroomDTOList = new ArrayList<>(classroomList.size());
+        classroomList.forEach(classroom -> classroomDTOList.add(convertOneClassroomToDTOWithReservations(classroom)));
+        return classroomDTOList;
+    }
+
     public ClassroomDTO convertOneClassroomToDTOWithLessons(Classroom classroom){
         Set<LessonDTO> lessonDTOs = classroom.getLessonListClassroom().stream()
                 .map(lesson -> new LessonDTO(lesson.getId(),
@@ -102,26 +114,6 @@ public class ClassroomService {
                 null,
                 reservationDTOs
         );
-    }
-
-    public List<ClassroomDTO> convertAllClassroomToDTOWithLessons(List<Classroom> classroomList){
-        List<ClassroomDTO> classroomDTOList = new ArrayList<>(classroomList.size());
-        Iterator<Classroom> classroomIterator = classroomList.iterator();
-        while (classroomIterator.hasNext()){
-            Classroom classroom = classroomIterator.next();
-            classroomDTOList.add(convertOneClassroomToDTOWithLessons(classroom));
-        }
-        return classroomDTOList;
-    }
-
-    public List<ClassroomDTO> convertAllClassroomToDTOWithReservations(List<Classroom> classroomList){
-        List<ClassroomDTO> classroomDTOList = new ArrayList<>(classroomList.size());
-        Iterator<Classroom> classroomIterator = classroomList.iterator();
-        while (classroomIterator.hasNext()){
-            Classroom classroom = classroomIterator.next();
-            classroomDTOList.add(convertOneClassroomToDTOWithReservations(classroom));
-        }
-        return classroomDTOList;
     }
 
 }

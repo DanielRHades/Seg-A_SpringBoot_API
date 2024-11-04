@@ -34,8 +34,7 @@ public class ReservationService {
     }
 
     public ReservationDTO findByIdWithUsers(Long id){
-        return convertOneReservationToDTOWithUsers(reservationRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("No existe una reserva con esa id.")));
+        return convertOneReservationToDTOWithUsers(findById(id));
     }
 
     public List<Reservation> findAll(){
@@ -72,15 +71,10 @@ public class ReservationService {
     public Reservation assignClassroomToReservation(Long idReservation, Long idClassroom){
         Reservation reservation = findById(idReservation);
         Classroom classroom = classroomRepository.findById(idClassroom)
-                .orElseThrow(()->new RuntimeException("No existe esta clase."));
-        Iterator<Lesson> lessonIterator = classroom.getLessonListClassroom().iterator();
-        while (lessonIterator.hasNext()){
-            Lesson lessonPointer = lessonIterator.next();
-            boolean interference = reservation.getReservationDate().getDayOfWeek().equals(lessonPointer.getDayWeek()) &&
-                    reservation.getStartTime().isBefore(lessonPointer.getEndTime()) &&
-                    reservation.getEndTime().isAfter(lessonPointer.getStartTime());
-            if (interference){
-                throw new RuntimeException("Existe una leccion en ese salon, a esa hora.");
+                .orElseThrow(()->new RuntimeException("No existe este salón"));
+        for (Lesson lesson: classroom.getLessonListClassroom()){
+            if (existInterference(reservation, lesson)){
+                throw new RuntimeException("Existe una lección en ese salon, a esa hora.");
             }
         }
         reservation.setClassroomReservation(classroom);
@@ -94,18 +88,12 @@ public class ReservationService {
         return reservationRepository.save(reservation);
     }
 
-    @Transactional
-    public List<ReservationDTO> convertAllReservationsToDTOWithUsers(List<Reservation> reservations){
-        List<ReservationDTO> reservationDTOs = new ArrayList<>(reservations.size());
-        Iterator<Reservation> reservationIterator = reservations.iterator();
-        while (reservationIterator.hasNext()){
-            Reservation reservation = reservationIterator.next();
-            reservationDTOs.add(convertOneReservationToDTOWithUsers(reservation));
-        }
-        return reservationDTOs;
+    public List<ReservationDTO> convertAllReservationsToDTOWithUsers(List<Reservation> reservationList){
+        List<ReservationDTO> reservationDTOList = new ArrayList<>(reservationList.size());
+        reservationList.forEach(reservation -> reservationDTOList.add(convertOneReservationToDTOWithUsers(reservation)));
+        return reservationDTOList;
     }
 
-    @Transactional
     public ReservationDTO convertOneReservationToDTOWithUsers(Reservation reservation){
         Set<UserDTO> userDTOs = reservation.getUserListReservation().stream().map(
                 user -> new UserDTO(user.getId(),
@@ -131,5 +119,12 @@ public class ReservationService {
                 reservationRequest.getStartTime(),
                 reservationRequest.getEndTime());
     }
+
+    public boolean existInterference(Reservation reservation, Lesson lesson){
+       return reservation.getReservationDate().getDayOfWeek().equals(lesson.getDayWeek()) &&
+                reservation.getStartTime().isBefore(lesson.getEndTime()) &&
+                reservation.getEndTime().isAfter(lesson.getStartTime());
+    }
+
 }
 
