@@ -1,12 +1,8 @@
 package com.proj.SegAProj.dto;
 
-import com.proj.SegAProj.models.Classroom;
-import com.proj.SegAProj.models.Lesson;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.DayOfWeek;
-import java.time.LocalTime;
 import java.util.Set;
 
 @Data

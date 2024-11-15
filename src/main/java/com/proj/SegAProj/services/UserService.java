@@ -1,15 +1,12 @@
 package com.proj.SegAProj.services;
 
 import com.proj.SegAProj.dto.LessonDTO;
-import com.proj.SegAProj.dto.SubjectDTO;
 import com.proj.SegAProj.dto.ReservationDTO;
 import com.proj.SegAProj.dto.UserDTO;
 import com.proj.SegAProj.models.Lesson;
-import com.proj.SegAProj.models.Subject;
 import com.proj.SegAProj.models.Reservation;
 import com.proj.SegAProj.models.User;
 import com.proj.SegAProj.repositories.LessonRepository;
-import com.proj.SegAProj.repositories.SubjectRepository;
 import com.proj.SegAProj.repositories.ReservationRepository;
 import com.proj.SegAProj.repositories.UserRepository;
 import org.springframework.beans.BeanUtils;

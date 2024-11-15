@@ -1,6 +1,5 @@
 package com.proj.SegAProj.controllers;
 
-
 import com.proj.SegAProj.dto.AuthenticationRequest;
 import com.proj.SegAProj.dto.AuthenticationResponse;
 import com.proj.SegAProj.services.AuthenticationService;

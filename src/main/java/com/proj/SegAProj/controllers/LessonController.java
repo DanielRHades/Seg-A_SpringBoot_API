@@ -6,7 +6,6 @@ import com.proj.SegAProj.models.Lesson;
 import com.proj.SegAProj.services.LessonService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

@@ -3,7 +3,6 @@ package com.proj.SegAProj.services;
 import com.proj.SegAProj.models.*;
 import com.proj.SegAProj.repositories.AssistRepository;
 import com.proj.SegAProj.repositories.LessonRepository;
-import com.proj.SegAProj.repositories.SubjectRepository;
 import com.proj.SegAProj.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,15 +45,5 @@ public class AssistService {
         lesson.getLessonAssistListLesson().add(assist);
         return assistRepository.save(assist);
     }
-
-//    @Transactional
-//    public User findUserByIdWithAssists(){
-//
-//    }
-
-//    @Transactional
-//    public Subject findSubjectByIdWithAssists(){
-//
-//    }
 
 }

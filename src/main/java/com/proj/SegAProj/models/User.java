@@ -1,6 +1,5 @@
 package com.proj.SegAProj.models;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.proj.SegAProj.enums.Role;
 import jakarta.persistence.*;

@@ -1,7 +1,6 @@
 package com.proj.SegAProj.services;
 
 import com.proj.SegAProj.dto.LessonDTO;
-import com.proj.SegAProj.dto.SubjectDTO;
 import com.proj.SegAProj.dto.ClassroomDTO;
 import com.proj.SegAProj.dto.ReservationDTO;
 import com.proj.SegAProj.models.Classroom;
