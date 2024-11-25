@@ -1,6 +1,7 @@
 package com.proj.SegAProj.controllers;
 
 import com.proj.SegAProj.dto.AssistRequest;
+import com.proj.SegAProj.dto.LessonAssistResponse;
 import com.proj.SegAProj.models.UserLessonAssist;
 import com.proj.SegAProj.services.AssistService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +17,11 @@ public class AssistController {
     @Autowired
     public AssistController (AssistService assistService){
         this.assistService = assistService;
+    }
+
+    @GetMapping(path = "/lesson/{id}")
+    public LessonAssistResponse findAssistsByLessonId(@PathVariable Long id){
+        return assistService.findAssistsByLessonId(id);
     }
 
     @PostMapping
