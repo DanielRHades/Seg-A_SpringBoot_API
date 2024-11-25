@@ -42,7 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v2/subject/**").hasAnyRole("ADMIN", "RASP")
                         .requestMatchers("/api/v2/reservation/**").hasAnyRole("ADMIN", "RASP")
                         .requestMatchers("/api/v2/lesson/**").hasAnyRole("ADMIN", "RASP")
-                        .requestMatchers("/api/v2/assist**").hasAnyRole("ADMIN", "RASP", "USER")
+                        .requestMatchers("/api/v2/assist/**").hasAnyRole("ADMIN", "RASP")
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

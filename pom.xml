@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.proj</groupId>
 	<artifactId>SegAProj</artifactId>
-	<version>1.0.0</version>
+	<version>1.1.0</version>
 	<name>SegAProj</name>
 	<description>Back End for Seg-A Project</description>
 	<url/>
